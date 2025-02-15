@@ -1,10 +1,4 @@
 const fetch = require("node-fetch");
-const { Agent } = require("https");
-
-// Create HTTPS agent that accepts self-signed certificates
-const httpsAgent = new Agent({
-  rejectUnauthorized: false,
-});
 
 // Convert Hibiscus transaction to Actual Budget format
 function convertTransaction(hibiscusTx) {
@@ -43,9 +37,7 @@ function createBasicAuth(username, password) {
 // Fetch transactions from Hibiscus API
 async function fetchHibiscusTransactions(config) {
   try {
-    // Set up fetch options with the HTTPS agent and basic auth
     const fetchOptions = {
-      agent: httpsAgent,
       headers: {
         Accept: "application/json",
         Authorization: createBasicAuth(
@@ -69,7 +61,6 @@ async function fetchHibiscusTransactions(config) {
 }
 
 module.exports = {
-  httpsAgent,
   convertTransaction,
   fetchHibiscusTransactions,
 };
