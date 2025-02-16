@@ -1,6 +1,6 @@
 import api from "@actual-app/api";
-import { loadConfig } from "./config.js";
-import { convertTransaction, fetchHibiscusTransactions } from "./utils.js";
+import { loadConfig } from "@app/config";
+import { convertTransaction, fetchHibiscusTransactions } from "@app/utils";
 
 async function main() {
   try {
@@ -37,10 +37,7 @@ async function main() {
     const actualTransactions = hibiscusTransactions.map(convertTransaction);
 
     console.log("Importing transactions...");
-    const result = await api.importTransactions(
-      dkbAccount.id,
-      actualTransactions
-    );
+    const result = await api.importTransactions(dkbAccount.id, actualTransactions);
 
     console.log("\nImport Summary:");
     console.log(`- Added: ${result.added.length} transactions`);
@@ -50,11 +47,11 @@ async function main() {
       result.errors.forEach((error) => console.error(`  - ${error}`));
     }
   } catch (error) {
-    console.error("\nError:", error.message);
-    if (error.meta || error.reason) {
+    console.error("\nError:", error instanceof Error ? error.message : error);
+    if (error && typeof error === "object" && ("meta" in error || "reason" in error)) {
       console.error("\nAdditional error details:");
-      if (error.meta) console.error("Meta:", error.meta);
-      if (error.reason) console.error("Reason:", error.reason);
+      if ("meta" in error) console.error("Meta:", error.meta);
+      if ("reason" in error) console.error("Reason:", error.reason);
     }
     process.exit(1);
   } finally {

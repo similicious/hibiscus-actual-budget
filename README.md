@@ -55,22 +55,3 @@ The application will:
 3. Convert them to Actual Budget format
 4. Import them into your specified account
 5. Provide a summary of imported transactions
-
-## Technical Details
-
-### Transaction Processing
-
-- Transactions are fetched from Hibiscus using basic authentication
-- Each transaction is converted to Actual Budget's format
-- Detailed notes are generated including:
-  - Transaction purpose
-  - IBAN
-  - BIC
-  - Transaction type
-  - End-to-End ID (when available)
-
-## Project Structure
-
-- `src/index.js`: Main application entry point
-- `src/config.js`: Configuration management
-- `src/utils.js`: Utility functions for transaction processing

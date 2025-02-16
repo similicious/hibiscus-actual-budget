@@ -1,7 +1,10 @@
+import { Config } from "@app/model/config";
+import { CreateActualTransaction } from "@app/model/create-actual-transaction";
+import { HibiscusTransaction } from "@app/model/hibiscus-transaction";
 import fetch from "node-fetch";
 
 // Convert Hibiscus transaction to Actual Budget format
-export function convertTransaction(hibiscusTx) {
+export function convertTransaction(hibiscusTx: HibiscusTransaction): CreateActualTransaction {
   return {
     date: hibiscusTx.datum,
     amount: Math.round(parseFloat(hibiscusTx.betrag) * 100),
@@ -14,7 +17,7 @@ export function convertTransaction(hibiscusTx) {
 }
 
 // Format transaction notes with additional details
-function formatNotes(tx) {
+function formatNotes(tx: HibiscusTransaction): string {
   const details = [
     `Type: ${tx.art}`,
     `Note: ${[tx.zweck, tx.zweck2, tx.zweck3].filter(Boolean).join(" ")}`,
@@ -25,24 +28,19 @@ function formatNotes(tx) {
 }
 
 // Create basic auth header
-function createBasicAuth(username, password) {
+function createBasicAuth(username: string, password: string): string {
   return "Basic " + Buffer.from(username + ":" + password).toString("base64");
 }
 
 // Fetch transactions from Hibiscus API
-export async function fetchHibiscusTransactions(config) {
+export async function fetchHibiscusTransactions(config: Config): Promise<HibiscusTransaction[]> {
   try {
-    const fetchOptions = {
+    const response = await fetch(config.hibiscusUrl, {
       headers: {
         Accept: "application/json",
-        Authorization: createBasicAuth(
-          config.hibiscusUsername,
-          config.hibiscusPassword
-        ),
+        Authorization: createBasicAuth(config.hibiscusUsername, config.hibiscusPassword),
       },
-    };
-
-    const response = await fetch(config.hibiscusUrl, fetchOptions);
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -51,6 +49,9 @@ export async function fetchHibiscusTransactions(config) {
     const transactions = await response.json();
     return Array.isArray(transactions) ? transactions : [];
   } catch (error) {
-    throw new Error(`Failed to fetch Hibiscus transactions: ${error.message}`);
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch Hibiscus transactions: ${error.message}`);
+    }
+    throw new Error("Failed to fetch Hibiscus transactions: Unknown error");
   }
 }

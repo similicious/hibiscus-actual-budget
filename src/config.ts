@@ -1,15 +1,13 @@
-import dotenv from "dotenv";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { Config } from "@app/model/config";
+import "dotenv/config";
 import { existsSync, mkdirSync } from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export function loadConfig() {
-  // Load environment variables from .env file
-  dotenv.config({ path: join(__dirname, "..", ".env") });
-
+export function loadConfig(): Config {
   const requiredVars = [
     "HIBISCUS_URL",
     "HIBISCUS_USERNAME",
@@ -17,14 +15,12 @@ export function loadConfig() {
     "ACTUAL_SERVER_URL",
     "ACTUAL_SYNC_ID",
     "ACTUAL_PASSWORD",
-  ];
+  ] as const;
 
   // Validate required environment variables
   const missing = requiredVars.filter((varName) => !process.env[varName]);
   if (missing.length > 0) {
-    throw new Error(
-      `Missing required environment variables: ${missing.join(", ")}`
-    );
+    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
   }
 
   const dataDir = join(__dirname, "..", "data");
