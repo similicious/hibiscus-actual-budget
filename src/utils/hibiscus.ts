@@ -26,10 +26,7 @@ export async function fetchHibiscusTransactions(config: Config): Promise<Hibiscu
 
     return transactions;
   } catch (error) {
-    if (error instanceof Error) {
-      logger.error("Failed to fetch Hibiscus transactions", error);
-      throw new Error(`Failed to fetch Hibiscus transactions: ${error.message}`);
-    }
-    throw error;
+    logger.error("Failed to fetch Hibiscus transactions", error);
+    throw new Error("Failed to fetch Hibiscus transactions");
   }
 }
