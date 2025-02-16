@@ -22,8 +22,6 @@ export async function fetchHibiscusTransactions(config: Config): Promise<Hibiscu
     // Validate transactions
     const transactions = z.array(hibiscusTransactionSchema).parse(response);
 
-    logger.info("Successfully fetched transactions");
-
     return transactions;
   } catch (error) {
     logger.error("Failed to fetch Hibiscus transactions", error);

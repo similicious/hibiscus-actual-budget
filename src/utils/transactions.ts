@@ -1,9 +1,10 @@
 import { CreateActualTransaction } from "@app/model/create-actual-transaction";
 import { HibiscusTransaction } from "@app/model/hibiscus-transaction";
+import { format } from "date-fns";
 
 export function mapToActualTransaction(hibiscusTx: HibiscusTransaction): CreateActualTransaction {
   return {
-    date: hibiscusTx.datum.toISOString().split("T")[0], // Format as YYYY-MM-DD
+    date: format(hibiscusTx.datum, "yyyy-MM-dd"), // Format as YYYY-MM-DD
     amount: hibiscusTx.betrag, // Already converted to cents by schema
     payee_name: hibiscusTx.empfaenger_name,
     imported_payee: hibiscusTx.empfaenger_name,
