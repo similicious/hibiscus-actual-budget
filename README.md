@@ -2,6 +2,8 @@
 
 A Node.js application that automatically syncs transactions from Hibiscus Server (a banking interface) to Actual Budget. This integration allows for seamless transaction importing from your bank account to your Actual Budget instance.
 
+Hibiscus Server does the heavy lifting and fetches the transaction from the bank(s) via FinTS / HBCI. This application pulls the transactions from the REST API provided by Hibiscus and imports them into Actual Budget.
+
 ## Features
 
 - 🔄 Automatic transaction syncing from Hibiscus to Actual Budget
