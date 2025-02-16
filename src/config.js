@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import { existsSync, mkdirSync } from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +28,11 @@ export function loadConfig() {
   }
 
   const dataDir = join(__dirname, "..", "data");
+
+  // Create data directory if it doesn't exist
+  if (!existsSync(dataDir)) {
+    mkdirSync(dataDir);
+  }
 
   return {
     hibiscusUrl: process.env.HIBISCUS_URL,
