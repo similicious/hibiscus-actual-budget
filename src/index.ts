@@ -1,67 +1,62 @@
 import api from "@actual-app/api";
 import { loadConfig } from "@app/config";
-import { convertTransaction, fetchHibiscusTransactions } from "@app/utils";
+import { fetchHibiscusTransactions } from "@app/utils/hibiscus";
+import { logger } from "@app/utils/logger";
+import { mapToActualTransaction } from "@app/utils/transactions";
 
 async function main() {
   try {
-    console.log("Loading configuration...");
+    logger.info("Loading configuration");
     const config = loadConfig();
 
-    console.log("Initializing Actual Budget...");
+    logger.info("Initializing Actual Budget");
     await api.init({
       dataDir: config.dataDir,
       serverURL: config.actualServerUrl,
       password: config.actualPassword,
     });
 
-    console.log("Downloading budget...");
+    logger.info("Downloading budget");
     await api.downloadBudget(config.actualSyncId);
 
-    console.log("Getting account list...");
+    logger.info("Getting account list");
     const accounts = await api.getAccounts();
     const dkbAccount = accounts.find((a) => a.name === "DKB");
     if (!dkbAccount) {
       throw new Error('Account "DKB" not found in Actual Budget');
     }
 
-    console.log("Fetching transactions from Hibiscus...");
+    logger.info("Fetching transactions from Hibiscus");
     const hibiscusTransactions = await fetchHibiscusTransactions(config);
-    console.log(`Found ${hibiscusTransactions.length} transactions`);
+    logger.info(`Found ${hibiscusTransactions.length} transactions`);
 
     if (hibiscusTransactions.length === 0) {
-      console.log("No transactions to import");
+      logger.info("No transactions to import");
       return;
     }
 
-    console.log("Converting transactions...");
-    const actualTransactions = hibiscusTransactions.map(convertTransaction);
+    logger.info("Converting transactions");
+    const actualTransactions = hibiscusTransactions.map(mapToActualTransaction);
 
-    console.log("Importing transactions...");
+    logger.info("Importing transactions");
     const result = await api.importTransactions(dkbAccount.id, actualTransactions);
 
-    console.log("\nImport Summary:");
-    console.log(`- Added: ${result.added.length} transactions`);
-    console.log(`- Updated: ${result.updated.length} transactions`);
+    logger.info(
+      `Import Summary: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions`,
+    );
+
     if (result.errors && result.errors.length > 0) {
-      console.log(`- Errors: ${result.errors.length}`);
-      result.errors.forEach((error) => console.error(`  - ${error}`));
+      logger.error(`- Errors: ${result.errors.length}`);
+      result.errors.forEach((error) => logger.error(`${error}`));
     }
-  } catch (error) {
-    console.error("\nError:", error instanceof Error ? error.message : error);
-    if (error && typeof error === "object" && ("meta" in error || "reason" in error)) {
-      console.error("\nAdditional error details:");
-      if ("meta" in error) console.error("Meta:", error.meta);
-      if ("reason" in error) console.error("Reason:", error.reason);
-    }
-    process.exit(1);
   } finally {
-    console.log("\nCleaning up...");
+    logger.info("Shutting down");
     await api.shutdown();
   }
 }
 
 // Run the script
 main().catch((error) => {
-  console.error("Fatal error:", error);
+  logger.error("Fatal error:", error);
   process.exit(1);
 });
