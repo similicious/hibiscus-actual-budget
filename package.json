@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Import transactions from Hibiscus to Actual Budget",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js"
   },
@@ -16,6 +17,6 @@
   "dependencies": {
     "@actual-app/api": "^25.2.1",
     "dotenv": "^16.3.1",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^3.3.2"
   }
 }

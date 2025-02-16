@@ -1,9 +1,13 @@
-const dotenv = require("dotenv");
-const path = require("path");
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
-function loadConfig() {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export function loadConfig() {
   // Load environment variables from .env file
-  dotenv.config({ path: path.join(__dirname, "..", ".env") });
+  dotenv.config({ path: join(__dirname, "..", ".env") });
 
   const requiredVars = [
     "HIBISCUS_URL",
@@ -22,7 +26,7 @@ function loadConfig() {
     );
   }
 
-  const dataDir = path.join(__dirname, "..", "data");
+  const dataDir = join(__dirname, "..", "data");
 
   return {
     hibiscusUrl: process.env.HIBISCUS_URL,
@@ -34,7 +38,3 @@ function loadConfig() {
     dataDir,
   };
 }
-
-module.exports = {
-  loadConfig,
-};

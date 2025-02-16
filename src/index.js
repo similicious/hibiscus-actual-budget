@@ -1,6 +1,6 @@
-const api = require("@actual-app/api");
-const { loadConfig } = require("./config.js");
-const { convertTransaction, fetchHibiscusTransactions } = require("./utils.js");
+import api from "@actual-app/api";
+import { loadConfig } from "./config.js";
+import { convertTransaction, fetchHibiscusTransactions } from "./utils.js";
 
 async function main() {
   try {

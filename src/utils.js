@@ -1,7 +1,7 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 // Convert Hibiscus transaction to Actual Budget format
-function convertTransaction(hibiscusTx) {
+export function convertTransaction(hibiscusTx) {
   return {
     date: hibiscusTx.datum,
     amount: Math.round(parseFloat(hibiscusTx.betrag) * 100),
@@ -35,7 +35,7 @@ function createBasicAuth(username, password) {
 }
 
 // Fetch transactions from Hibiscus API
-async function fetchHibiscusTransactions(config) {
+export async function fetchHibiscusTransactions(config) {
   try {
     const fetchOptions = {
       headers: {
@@ -59,8 +59,3 @@ async function fetchHibiscusTransactions(config) {
     throw new Error(`Failed to fetch Hibiscus transactions: ${error.message}`);
   }
 }
-
-module.exports = {
-  convertTransaction,
-  fetchHibiscusTransactions,
-};
