@@ -6,9 +6,9 @@ export function convertTransaction(hibiscusTx) {
     date: hibiscusTx.datum,
     amount: Math.round(parseFloat(hibiscusTx.betrag) * 100),
     payee_name: hibiscusTx.empfaenger_name,
-    imported_payee: hibiscusTx.zweck,
+    imported_payee: hibiscusTx.empfaenger_name,
     notes: formatNotes(hibiscusTx),
-    imported_id: hibiscusTx.txid,
+    imported_id: hibiscusTx.checksum,
     cleared: true,
   };
 }
@@ -16,17 +16,12 @@ export function convertTransaction(hibiscusTx) {
 // Format transaction notes with additional details
 function formatNotes(tx) {
   const details = [
-    `Purpose: ${tx.zweck}`,
-    `IBAN: ${tx.empfaenger_konto}`,
-    `BIC: ${tx.empfaenger_blz}`,
     `Type: ${tx.art}`,
+    `Note: ${[tx.zweck, tx.zweck2, tx.zweck3].filter(Boolean).join(" ")}`,
+    `Id: ${tx.id}`,
   ];
 
-  if (tx.endtoendid) {
-    details.push(`End-to-End ID: ${tx.endtoendid}`);
-  }
-
-  return details.join("\n");
+  return details.join(" | ");
 }
 
 // Create basic auth header
