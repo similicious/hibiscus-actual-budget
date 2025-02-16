@@ -1,8 +1,9 @@
 # Dependencies
 node_modules/
 
-# Environment variables
-.env
+
+# Configuration
+config.json
 
 # Local data
 data/

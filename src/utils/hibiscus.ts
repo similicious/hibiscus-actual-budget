@@ -10,12 +10,13 @@ function createBasicAuth(username: string, password: string): string {
   return "Basic " + Buffer.from(username + ":" + password).toString("base64");
 }
 // Fetch and validate transactions from Hibiscus API
-export async function fetchHibiscusTransactions(config: Config): Promise<HibiscusTransaction[]> {
+export async function fetchHibiscusTransactions(config: Config, endpoint: string): Promise<HibiscusTransaction[]> {
   try {
-    const response = await fetch(config.hibiscusUrl, {
+    const url = new URL(endpoint, config.hibiscus.url).toString();
+    const response = await fetch(url, {
       headers: {
         Accept: "application/json",
-        Authorization: createBasicAuth(config.hibiscusUsername, config.hibiscusPassword),
+        Authorization: createBasicAuth(config.hibiscus.username, config.hibiscus.password),
       },
     }).then((res) => res.json());
 

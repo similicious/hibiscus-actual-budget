@@ -11,43 +11,49 @@ async function main() {
 
     logger.info("Initializing Actual Budget");
     await api.init({
+      serverURL: config.actual.serverUrl,
+      password: config.actual.password,
       dataDir: config.dataDir,
-      serverURL: config.actualServerUrl,
-      password: config.actualPassword,
     });
 
-    logger.info("Downloading budget");
-    await api.downloadBudget(config.actualSyncId);
+    for (const budget of config.budgets) {
+      logger.info(`Processing budget with sync ID: ${budget.syncId}`);
+      await api.downloadBudget(budget.syncId);
 
-    logger.info("Getting account list");
-    const accounts = await api.getAccounts();
-    const dkbAccount = accounts.find((a) => a.name === "DKB");
-    if (!dkbAccount) {
-      throw new Error('Account "DKB" not found in Actual Budget');
-    }
+      logger.info("Getting account list");
+      const accounts = await api.getAccounts();
 
-    logger.info("Fetching transactions from Hibiscus");
-    const hibiscusTransactions = await fetchHibiscusTransactions(config);
-    logger.info(`Found ${hibiscusTransactions.length} transactions`);
+      for (const accountMapping of budget.accounts) {
+        const account = accounts.find((account) => account.id === accountMapping.accountId);
+        if (!account) {
+          logger.error(`Account ${accountMapping.accountId} not found in Actual Budget`);
+          continue;
+        }
 
-    if (hibiscusTransactions.length === 0) {
-      logger.info("No transactions to import");
-      return;
-    }
+        logger.info(`Fetching transactions for account: ${account.name}`);
+        const hibiscusTransactions = await fetchHibiscusTransactions(config, accountMapping.hibiscusEndpoint);
+        logger.info(`Found ${hibiscusTransactions.length} transactions`);
 
-    logger.info("Converting transactions");
-    const actualTransactions = hibiscusTransactions.map(mapToActualTransaction);
+        if (hibiscusTransactions.length === 0) {
+          logger.info("No transactions to import");
+          continue;
+        }
 
-    logger.info("Importing transactions");
-    const result = await api.importTransactions(dkbAccount.id, actualTransactions);
+        logger.info("Converting transactions");
+        const actualTransactions = hibiscusTransactions.map(mapToActualTransaction);
 
-    logger.info(
-      `Import Summary: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions`,
-    );
+        logger.info("Importing transactions");
+        const result = await api.importTransactions(account.id, actualTransactions);
 
-    if (result.errors && result.errors.length > 0) {
-      logger.error(`- Errors: ${result.errors.length}`);
-      result.errors.forEach((error) => logger.error(`${error}`));
+        logger.info(
+          `Import Summary for ${account.name}: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions`,
+        );
+
+        if (result.errors && result.errors.length > 0) {
+          logger.error(`- Errors: ${result.errors.length}`);
+          result.errors.forEach((error) => logger.error(`${error}`));
+        }
+      }
     }
   } finally {
     logger.info("Shutting down");

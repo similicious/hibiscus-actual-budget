@@ -1,0 +1,36 @@
+{
+  "actual": {
+    "serverUrl": "http://localhost:5006",
+    "password": "your-password"
+  },
+  "hibiscus": {
+    "url": "https://hibiscus.example.com",
+    "username": "user",
+    "password": "pass"
+  },
+  "dataDir": "data",
+  "budgets": [
+    {
+      "syncId": "sync-id-1",
+      "accounts": [
+        {
+          "accountId": "account-id-1",
+          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/1/umsaetze/days/15"
+        },
+        {
+          "accountId": "account-id-2",
+          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/2/umsaetze/days/15"
+        }
+      ]
+    },
+    {
+      "syncId": "sync-id-2",
+      "accounts": [
+        {
+          "accountId": "account-id-3",
+          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/3/umsaetze/days/15"
+        }
+      ]
+    }
+  ]
+}

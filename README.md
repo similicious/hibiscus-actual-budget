@@ -7,8 +7,7 @@ A Node.js application that automatically syncs transactions from Hibiscus Server
 - 🔄 Automatic transaction syncing from Hibiscus to Actual Budget
 - 🎯 Smart transaction mapping with detailed notes
 - 💡 Intelligent duplicate detection
-- 🚨 Comprehensive error handling and logging
-- ⚙️ Flexible configuration through environment variables
+- 📦 Support for multiple budgets and accounts
 
 ## Prerequisites
 
@@ -23,22 +22,57 @@ A Node.js application that automatically syncs transactions from Hibiscus Server
    ```bash
    npm install
    ```
-3. Copy the example environment file:
+3. Copy the example configuration file:
    ```bash
-   cp .env.example .env
+   cp config.json.example config.json
    ```
-4. Configure your environment variables in the `.env` file
+4. Configure your settings in `config.json`
 
 ## Configuration
 
-The following environment variables are required:
+The configuration file (`config.json`) has the following structure:
 
-- `HIBISCUS_URL`: Your Hibiscus server transactions endpoint URL like `https://$HIBISCUS_HOST/webadmin/rest/hibiscus/konto/$ACCOUNT_ID/umsaetze`
-- `HIBISCUS_USERNAME`: Your Hibiscus username (defaults to `admin`)
-- `HIBISCUS_PASSWORD`: Your Hibiscus password
-- `ACTUAL_SERVER_URL`: Your Actual Budget server URL
-- `ACTUAL_SYNC_ID`: Your Actual Budget sync ID
-- `ACTUAL_PASSWORD`: Your Actual Budget password
+```json
+{
+  "actual": {
+    "serverUrl": "http://localhost:5006",
+    "password": "your-password"
+  },
+  "hibiscus": {
+    "url": "https://hibiscus.example.com",
+    "username": "user",
+    "password": "pass"
+  },
+  "dataDir": "data",
+  "budgets": [
+    {
+      "syncId": "sync-id-1",
+      "accounts": [
+        {
+          "accountId": "account-id-1",
+          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/1/umsaetze/days/15"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Configuration Options
+
+- `actual`: Global Actual Budget settings
+  - `serverUrl`: Your Actual Budget server URL
+  - `password`: Your Actual Budget password
+- `hibiscus`: Global Hibiscus settings
+  - `url`: Base URL of your Hibiscus server
+  - `username`: Your Hibiscus username
+  - `password`: Your Hibiscus password
+- `dataDir`: Directory for storing Actual Budget data
+- `budgets`: Array of budgets to sync
+  - `syncId`: The Actual Budget sync ID
+  - `accounts`: Array of account mappings
+    - `accountId`: The Actual Budget account ID
+    - `hibiscusEndpoint`: The Hibiscus transactions endpoint for this account
 
 ## Usage
 
@@ -51,7 +85,10 @@ npm start
 The application will:
 
 1. Connect to your Hibiscus instance
-2. Fetch recent transactions
-3. Convert them to Actual Budget format
-4. Import them into your specified account
-5. Provide a summary of imported transactions
+2. For each configured budget:
+   - Download the budget data
+   - For each configured account:
+     - Fetch transactions from the specified Hibiscus endpoint
+     - Convert them to Actual Budget format
+     - Import them into the specified account
+3. Provide a summary of imported transactions for each account

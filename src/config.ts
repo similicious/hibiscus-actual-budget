@@ -1,8 +1,6 @@
-import { Config } from "@app/model/config";
-import { envSchema } from "@app/model/env";
+import { Config, configSchema } from "@app/model/config";
 import { logger } from "@app/utils/logger";
-import "dotenv/config";
-import { existsSync, mkdirSync } from "fs";
+import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 
@@ -11,28 +9,13 @@ const __dirname = dirname(__filename);
 
 export function loadConfig(): Config {
   try {
-    // Validate environment variables
-    const env = envSchema.parse(process.env);
+    const configPath = join(__dirname, "..", "config.json");
+    const configFile = readFileSync(configPath, "utf-8");
+    const configJson = JSON.parse(configFile);
 
-    const dataDir = join(__dirname, "..", "data");
+    // Validate configuration
+    const config = configSchema.parse(configJson);
 
-    // Create data directory if it doesn't exist
-    if (!existsSync(dataDir)) {
-      logger.info("Creating data directory", { path: dataDir });
-      mkdirSync(dataDir);
-    }
-
-    const config = {
-      hibiscusUrl: env.HIBISCUS_URL,
-      hibiscusUsername: env.HIBISCUS_USERNAME,
-      hibiscusPassword: env.HIBISCUS_PASSWORD,
-      actualServerUrl: env.ACTUAL_SERVER_URL,
-      actualPassword: env.ACTUAL_PASSWORD,
-      actualSyncId: env.ACTUAL_SYNC_ID,
-      dataDir,
-    };
-
-    logger.debug("Config loaded successfully", { config: { ...config, hibiscusPassword: "[REDACTED]" } });
     return config;
   } catch (error) {
     logger.error("Failed to load configuration", error as Error);
