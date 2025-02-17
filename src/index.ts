@@ -45,6 +45,16 @@ async function main() {
         logger.info("Importing transactions");
         const result = await api.importTransactions(account.id, actualTransactions);
 
+        const actualBalance = await api.getAccountBalance(account.id);
+        logger.info(`Account balance for ${account.name}: ${actualBalance}`);
+
+        const hibiscusBalance = hibiscusTransactions.at(0)?.saldo ?? 0;
+        logger.info(`Hibiscus balance for ${account.name}: ${hibiscusBalance}`);
+
+        if (actualBalance === hibiscusBalance) {
+          logger.info(`Hibiscus and Actual balances match 🎉`);
+        }
+
         logger.info(
           `Import Summary for ${account.name}: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions`,
         );
