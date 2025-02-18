@@ -13,7 +13,7 @@ const hibiscusConfigSchema = z.object({
 
 const accountMappingSchema = z.object({
   accountId: z.string().min(1),
-  hibiscusEndpoint: z.string().startsWith("/"),
+  hibiscusAccountId: z.number().min(1),
 });
 
 const budgetConfigSchema = z.object({

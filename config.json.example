@@ -15,11 +15,11 @@
       "accounts": [
         {
           "accountId": "account-id-1",
-          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/1/umsaetze/days/15"
+          "hibiscusAccountId": 1
         },
         {
           "accountId": "account-id-2",
-          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/2/umsaetze/days/15"
+          "hibiscusAccountId": 2
         }
       ]
     },
@@ -28,7 +28,7 @@
       "accounts": [
         {
           "accountId": "account-id-3",
-          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/3/umsaetze/days/15"
+          "hibiscusAccountId": 3
         }
       ]
     }

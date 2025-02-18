@@ -52,7 +52,7 @@ The configuration file (`config.json`) has the following structure:
       "accounts": [
         {
           "accountId": "account-id-1",
-          "hibiscusEndpoint": "/webadmin/rest/hibiscus/konto/1/umsaetze/days/15"
+          "hibiscusAccountId": 1
         }
       ]
     }
@@ -74,7 +74,7 @@ The configuration file (`config.json`) has the following structure:
   - `syncId`: The Actual Budget sync ID
   - `accounts`: Array of account mappings
     - `accountId`: The Actual Budget account ID
-    - `hibiscusEndpoint`: The Hibiscus transactions endpoint for this account
+    - `hibiscusAccountId`: The Hibiscus account ID
 
 ## Usage
 
@@ -90,7 +90,7 @@ The application will:
 2. For each configured budget:
    - Download the budget data
    - For each configured account:
-     - Fetch transactions from the specified Hibiscus endpoint
+     - Fetch transactions using the Hibiscus account ID
      - Convert them to Actual Budget format
      - Import them into the specified account
 3. Provide a summary of imported transactions for each account

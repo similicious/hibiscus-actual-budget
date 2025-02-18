@@ -31,7 +31,7 @@ async function main() {
         }
 
         logger.info(`Fetching transactions for account: ${account.name}`);
-        const hibiscusTransactions = await fetchHibiscusTransactions(config, accountMapping.hibiscusEndpoint);
+        const hibiscusTransactions = await fetchHibiscusTransactions(config, accountMapping.hibiscusAccountId);
         logger.info(`Found ${hibiscusTransactions.length} transactions`);
 
         if (hibiscusTransactions.length === 0) {

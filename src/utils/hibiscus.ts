@@ -9,9 +9,18 @@ import { z } from "zod";
 function createBasicAuth(username: string, password: string): string {
   return "Basic " + Buffer.from(username + ":" + password).toString("base64");
 }
+// Construct the Hibiscus endpoint URL for an account
+function constructHibiscusEndpoint(hibiscusAccountId: number): string {
+  return `/webadmin/rest/hibiscus/konto/${hibiscusAccountId}/umsaetze/days/12`;
+}
+
 // Fetch and validate transactions from Hibiscus API
-export async function fetchHibiscusTransactions(config: Config, endpoint: string): Promise<HibiscusTransaction[]> {
+export async function fetchHibiscusTransactions(
+  config: Config,
+  hibiscusAccountId: number,
+): Promise<HibiscusTransaction[]> {
   try {
+    const endpoint = constructHibiscusEndpoint(hibiscusAccountId);
     const url = new URL(endpoint, config.hibiscus.url).toString();
     const response = await fetch(url, {
       headers: {
