@@ -9,7 +9,7 @@ const __dirname = dirname(__filename);
 
 export function loadConfig(): Config {
   try {
-    const configPath = join(__dirname, "..", "config.json");
+    const configPath = join(__dirname, "..", "config", "config.json");
     const configFile = readFileSync(configPath, "utf-8");
     const configJson = JSON.parse(configFile);
 

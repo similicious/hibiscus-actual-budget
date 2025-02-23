@@ -53,53 +53,22 @@ sequenceDiagram
    ```
 3. Copy the example configuration file:
    ```bash
-   cp config.json.example config.json
+   cp config/config.json.example config/config.json
    ```
-4. Configure your settings in `config.json`
+4. Configure your settings in `config/config.json`
+
+### Docker Installation
+
+When running with Docker, you'll need to mount both the data and config volumes:
+
+```bash
+docker run -v /path/to/config:/app/config -v /path/to/data:/app/data -p 3000:3000 hibiscus-actual
+```
 
 ## Configuration
 
-The configuration file (`config.json`) has the following structure. The `ntfy` section configures the notification system, and `server.publicUrl` is required for the notification action button:
-
-```json
-{
-  "server": {
-    "port": 3000,
-    "publicUrl": "https://hibiscus-actual.example.com"
-  },
-  "ntfy": {
-    "topic": "your-topic",
-    "schedule": "0 12 */2 * *"
-  },
-  "actual": {
-    "serverUrl": "http://localhost:5006",
-    "password": "your-password"
-  },
-  "hibiscus": {
-    "url": "https://hibiscus.example.com",
-    "username": "user",
-    "password": "pass"
-  },
-  "dataDir": "data",
-  "budgets": [
-    {
-      "syncId": "sync-id-1",
-      "accounts": [
-        {
-          "accountId": "account-id-1",
-          "hibiscusAccountId": 1
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Configuration Options
-
 - `server`: Server settings
-  - `port`: Port number for the webhook server (default: 3000)
-  - `publicUrl`: Public URL of your server (required for ntfy action button)
+  - `publicUrl`: Public URL of your server (required for ntfy button)
 - `ntfy`: Notification settings
   - `topic`: Your ntfy.sh topic for notifications
   - `schedule`: Cron schedule for reminders (e.g. "0 12 _/2 _ \*" for noon every 2 days)
@@ -119,17 +88,29 @@ The configuration file (`config.json`) has the following structure. The `ntfy` s
 
 ## Usage
 
-1. Start the server:
+The server listens on port 3000 by default. You can override this using the `PORT` environment variable.
 
-   ```bash
-   npm start
-   ```
+### Running Locally
 
-2. Configure Hibiscus to send webhook notifications to this application when accounts are synced:
+Start the server:
 
-   - In Hibiscus, set up a webhook for account synchronization
-   - Point it to `http://your-server:3000/webhook`
-     When an account is synced in Hibiscus, the server will:
+```bash
+npm start
+```
+
+### Running with Docker
+
+```bash
+docker run -v /path/to/config:/app/config -v /path/to/data:/app/data -p 3000:3000 -e PORT=3000 hibiscus-actual
+```
+
+### Setting Up Hibiscus
+
+Configure Hibiscus to send webhook notifications to this application when accounts are synced:
+
+- In Hibiscus, set up a webhook for account synchronization
+- Point it to `http://your-server:3000/webhook`
+  When an account is synced in Hibiscus, the server will:
 
 3. Receive the webhook notification
 4. Find the corresponding budget and account configuration

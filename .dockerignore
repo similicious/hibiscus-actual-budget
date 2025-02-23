@@ -1,0 +1,30 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies
+node_modules
+npm-debug.log
+
+# Build outputs
+dist
+
+# Environment and config
+.env
+config/*.json
+
+# Development files
+.vscode
+.idea
+*.log
+
+# Data directory (mounted as volume)
+data
+
+# Editor configs
+.prettierrc
+.prettierignore
+
+# Documentation
+README.md
+LICENSE

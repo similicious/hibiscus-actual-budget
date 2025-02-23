@@ -7,7 +7,13 @@ const config = loadConfig();
 
 const app = createServer(config);
 
-const port = config.server.port;
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+
+// Validate port
+if (isNaN(port) || port < 1 || port > 65535) {
+  throw new Error(`Invalid PORT: ${process.env.PORT}`);
+}
+
 app.listen(port, () => {
   logger.info(`Server is running on port ${port}`);
   logger.info("Waiting for Hibiscus webhook calls...");

@@ -27,7 +27,6 @@ const ntfyConfigSchema = z.object({
 });
 
 const serverConfigSchema = z.object({
-  port: z.number().min(1).max(65535).default(3000),
   publicUrl: z.string().url(),
 });
 

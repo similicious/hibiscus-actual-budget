@@ -1,6 +1,5 @@
 {
   "server": {
-    "port": 3000,
     "publicUrl": "https://hibiscus-actual.example.com"
   },
   "ntfy": {
