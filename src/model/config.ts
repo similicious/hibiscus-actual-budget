@@ -21,7 +21,12 @@ const budgetConfigSchema = z.object({
   accounts: z.array(accountMappingSchema).min(1),
 });
 
+const serverConfigSchema = z.object({
+  port: z.number().min(1).max(65535).default(3000),
+});
+
 export const configSchema = z.object({
+  server: serverConfigSchema,
   actual: actualConfigSchema,
   hibiscus: hibiscusConfigSchema,
   dataDir: z.string(),

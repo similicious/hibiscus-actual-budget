@@ -1,4 +1,7 @@
 {
+  "server": {
+    "port": 3000
+  },
   "actual": {
     "serverUrl": "http://localhost:5006",
     "password": "your-password"
