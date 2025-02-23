@@ -57,14 +57,6 @@ sequenceDiagram
    ```
 4. Configure your settings in `config/config.json`
 
-### Docker Installation
-
-When running with Docker, you'll need to mount both the data and config volumes:
-
-```bash
-docker run -v /path/to/config:/app/config -v /path/to/data:/app/data -p 3000:3000 hibiscus-actual
-```
-
 ## Configuration
 
 - `server`: Server settings
@@ -101,7 +93,7 @@ npm start
 ### Running with Docker
 
 ```bash
-docker run -v /path/to/config:/app/config -v /path/to/data:/app/data -p 3000:3000 -e PORT=3000 hibiscus-actual
+docker run -v /path/to/config:/app/config -v /path/to/data:/app/data -p 3000:3000 -e PORT=3000 ghcr.io/similicious/hibiscus-actual-budget:latest
 ```
 
 ### Setting Up Hibiscus
