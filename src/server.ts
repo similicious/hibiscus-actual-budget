@@ -1,6 +1,8 @@
 import { Config } from "@app/model/config";
+import { triggerHibiscusSync } from "@app/utils/hibiscus";
 import { importTransactionsForAccount } from "@app/utils/import-transactions";
 import { logger } from "@app/utils/logger";
+import { startNotificationScheduler } from "@app/utils/scheduler";
 import express from "express";
 import { z } from "zod";
 
@@ -13,6 +15,49 @@ export function createServer(config: Config) {
 
   // Parse URL-encoded bodies
   app.use(express.urlencoded({ extended: true }));
+
+  // Start notification scheduler
+  startNotificationScheduler(config);
+
+  // Endpoint for manual sync trigger from ntfy notification
+  app.get("/sync", async (req: express.Request, res: express.Response) => {
+    try {
+      logger.info("Manual sync triggered via ntfy");
+      await triggerHibiscusSync(config);
+      res.send(`
+        <html>
+          <head>
+            <title>Hibiscus Sync</title>
+            <style>
+              body {
+                font-family: system-ui, -apple-system, sans-serif;
+                max-width: 600px;
+                margin: 40px auto;
+                padding: 20px;
+                text-align: center;
+              }
+              h1 { color: #2c3e50; }
+              .message { 
+                background: #e8f5e9;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 20px 0;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Hibiscus Sync</h1>
+            <div class="message">
+              Sync request sent to Hibiscus. Please check your banking app for authorization.
+            </div>
+          </body>
+        </html>
+      `);
+    } catch (error) {
+      logger.error("Failed to handle sync request", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
 
   app.post("/webhook", async (req: express.Request, res: express.Response) => {
     try {

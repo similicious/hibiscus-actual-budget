@@ -17,6 +17,32 @@ Hibiscus Server does the heavy lifting and fetches the transactions from the ban
 - Node.js installed on your system
 - A Hibiscus instance with accounts set up
 - An Actual Budget instance
+- A topic on ntfy.sh for notifications
+
+## Notification System
+
+This application uses ntfy.sh to send periodic reminders for triggering the sync from your bank into Hibiscus. Since banks require user interaction for authorization (PushTAN), the sync cannot be fully automated. Instead, you'll receive a notification with a button to trigger the sync.
+
+### How it works
+
+```mermaid
+sequenceDiagram
+    participant Scheduler
+    participant ntfy
+    participant User
+    participant Server
+    participant Hibiscus
+    participant Actual
+
+    Scheduler->>ntfy: Send reminder notification
+    ntfy->>User: Display notification with sync button
+    User->>Server: Click sync button (GET /sync)
+    Server->>Hibiscus: Request sync
+    Hibiscus-->>User: Request authorization (banking app)
+    User->>Hibiscus: Authorize
+    Hibiscus->>Server: Send webhook
+    Server->>Actual: Import transactions
+```
 
 ## Installation
 
@@ -33,12 +59,17 @@ Hibiscus Server does the heavy lifting and fetches the transactions from the ban
 
 ## Configuration
 
-The configuration file (`config.json`) has the following structure:
+The configuration file (`config.json`) has the following structure. The `ntfy` section configures the notification system, and `server.publicUrl` is required for the notification action button:
 
 ```json
 {
   "server": {
-    "port": 3000
+    "port": 3000,
+    "publicUrl": "https://hibiscus-actual.example.com"
+  },
+  "ntfy": {
+    "topic": "your-topic",
+    "schedule": "0 12 */2 * *"
   },
   "actual": {
     "serverUrl": "http://localhost:5006",
@@ -68,6 +99,10 @@ The configuration file (`config.json`) has the following structure:
 
 - `server`: Server settings
   - `port`: Port number for the webhook server (default: 3000)
+  - `publicUrl`: Public URL of your server (required for ntfy action button)
+- `ntfy`: Notification settings
+  - `topic`: Your ntfy.sh topic for notifications
+  - `schedule`: Cron schedule for reminders (e.g. "0 12 _/2 _ \*" for noon every 2 days)
 - `actual`: Global Actual Budget settings
   - `serverUrl`: Your Actual Budget server URL
   - `password`: Your Actual Budget password

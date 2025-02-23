@@ -1,6 +1,11 @@
 {
   "server": {
-    "port": 3000
+    "port": 3000,
+    "publicUrl": "https://hibiscus-actual.example.com"
+  },
+  "ntfy": {
+    "topic": "your-topic",
+    "schedule": "0 12 */2 * *"
   },
   "actual": {
     "serverUrl": "http://localhost:5006",

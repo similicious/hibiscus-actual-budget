@@ -5,6 +5,35 @@ import { logger } from "@app/utils/logger";
 import fetch from "node-fetch";
 import { z } from "zod";
 
+// Trigger sync for all accounts in Hibiscus
+export async function triggerHibiscusSync(config: Config): Promise<void> {
+  try {
+    const url = new URL("/hibiscus/", config.hibiscus.url).toString();
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: createBasicAuth(config.hibiscus.username, config.hibiscus.password),
+      },
+      body: new URLSearchParams({
+        action: "execute",
+      }).toString(),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to trigger sync: ${response.statusText}`);
+    }
+
+    console.log(response);
+
+    logger.info("Successfully triggered Hibiscus sync");
+  } catch (error) {
+    logger.error("Failed to trigger Hibiscus sync", error);
+    throw new Error("Failed to trigger Hibiscus sync");
+  }
+}
+
 // Create basic auth header
 function createBasicAuth(username: string, password: string): string {
   return "Basic " + Buffer.from(username + ":" + password).toString("base64");
