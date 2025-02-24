@@ -12,11 +12,6 @@ export function startNotificationScheduler(config: Config) {
         logger.error("Failed to send scheduled notification", error);
       });
     });
-
-    // Send initial notification
-    sendNtfyNotification(config).catch((error) => {
-      logger.error("Failed to send initial notification", error);
-    });
   } catch (error) {
     logger.error("Failed to start notification scheduler", error);
     throw error;
