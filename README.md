@@ -1,29 +1,18 @@
 # Hibiscus-Actual Integration
 
-A Node.js application that syncs transactions from Hibiscus Server (a banking interface) to Actual Budget. This integration allows for seamless transaction importing from your bank account to your Actual Budget instance.
-
-Hibiscus Server does the heavy lifting and fetches the transactions from the bank(s) via FinTS / HBCI. When an account is synced in Hibiscus, it notifies this application via a webhook, which then imports the new transactions into Actual Budget.
+A Node.js application that syncs your bank transactions to Actual Budget using Hibiscus Server as a FinTS/HBCI gateway.
 
 ## Features
 
 - 🔄 Webhook-based transaction syncing from Hibiscus to Actual Budget
-- 🎯 Smart transaction mapping with detailed notes
-- 💡 Intelligent duplicate detection
+- 🎯 Transaction mapping with detailed notes
+- 💡 Duplicate detection
 - 📦 Support for multiple budgets and accounts
-- 🚀 Real-time updates when accounts are synced in Hibiscus
+- 📱 Notifications via ntfy.sh for sync reminders
 
-## Prerequisites
+## How it Works
 
-- Node.js installed on your system
-- A Hibiscus instance with accounts set up
-- An Actual Budget instance
-- A topic on ntfy.sh for notifications
-
-## Notification System
-
-This application uses ntfy.sh to send periodic reminders for triggering the sync from your bank into Hibiscus. Since banks require user interaction for authorization (PushTAN), the sync cannot be fully automated. Instead, you'll receive a notification with a button to trigger the sync.
-
-### How it works
+Hibiscus Server implements the FinTS protocol, handling the banking communication and providing this application with a JSON endpoint for fetching transactions. Authorization with the bank usually requires user interaction (e.g. PushTAN). Because of this, the syncing process cannot be fully automatic. This application will send periodic reminders via ntfy.sh with a button triggering the sync. You can keep the notification and trigger the sync when it's convenient to confirm the authorisation prompts.
 
 ```mermaid
 sequenceDiagram
@@ -44,20 +33,36 @@ sequenceDiagram
     Server->>Actual: Import transactions
 ```
 
+## Prerequisites
+
+- Node.js
+- Hibiscus Server instance with accounts configured
+- Actual Budget instance
+- ntfy.sh topic for notifications
+
 ## Installation
 
+### Standard Installation
+
 1. Clone this repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Copy the example configuration file:
-   ```bash
-   cp config/config.json.example config/config.json
-   ```
-4. Configure your settings in `config/config.json`
+2. Install dependencies: `npm install`
+3. Copy configuration: `cp config/config.json.example config/config.json`
+4. Configure `config/config.json`
+5. Start server: `npm start`
+
+### Docker Installation
+
+```bash
+docker run -v /path/to/config:/app/config \
+          -v /path/to/data:/app/data \
+          -p 3000:3000 \
+          -e PORT=3000 \
+          hibiscus-actual
+```
 
 ## Configuration
+
+Configure the following in `config/config.json`:
 
 - `server`: Server settings
   - `publicUrl`: Public URL of your server (required for ntfy button)
@@ -78,34 +83,15 @@ sequenceDiagram
     - `accountId`: The Actual Budget account ID
     - `hibiscusAccountId`: The Hibiscus account ID
 
-## Usage
+## Hibiscus Setup
 
-The server listens on port 3000 by default. You can override this using the `PORT` environment variable.
+1. In Hibiscus, configure a webhook for account synchronization
+2. Point it to `http://your-server:3000/webhook`
 
-### Running Locally
+When an account syncs, the server will automatically:
 
-Start the server:
-
-```bash
-npm start
-```
-
-### Running with Docker
-
-```bash
-docker run -v /path/to/config:/app/config -v /path/to/data:/app/data -p 3000:3000 -e PORT=3000 ghcr.io/similicious/hibiscus-actual-budget:latest
-```
-
-### Setting Up Hibiscus
-
-Configure Hibiscus to send webhook notifications to this application when accounts are synced:
-
-- In Hibiscus, set up a webhook for account synchronization
-- Point it to `http://your-server:3000/webhook`
-  When an account is synced in Hibiscus, the server will:
-
-3. Receive the webhook notification
-4. Find the corresponding budget and account configuration
-5. Download the budget data
-6. Fetch and import new transactions for that account
-7. Provide a summary of imported transactions
+1. Process the webhook notification
+2. Match the budget and account configuration
+3. Download budget data
+4. Import new transactions
+5. Provide an import summary
