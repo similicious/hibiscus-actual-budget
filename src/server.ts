@@ -36,7 +36,7 @@ export function createServer(config: Config) {
                 padding: 20px;
                 text-align: center;
               }
-              h1 { color: #2c3e50; }
+              h1 { color:#264e29; }
               .message { 
                 background: #e8f5e9;
                 padding: 20px;
@@ -50,6 +50,18 @@ export function createServer(config: Config) {
             <div class="message">
               Sync request sent to Hibiscus. Please check your banking app for authorization.
             </div>
+            <button onclick="window.close()" style="
+              background-color: #2c3e50;
+              color: white;
+              border: none;
+              padding: 10px 20px;
+              border-radius: 4px;
+              cursor: pointer;
+              font-size: 16px;
+              margin-top: 20px;
+            ">
+              Close Tab
+            </button>
           </body>
         </html>
       `);
