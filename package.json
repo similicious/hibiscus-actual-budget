@@ -7,7 +7,8 @@
   "scripts": {
     "start": "tsx src/index.ts | pino-pretty",
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "simulate-webhook": "curl -X POST -d \"context={\\\"id\\\":\\\"1\\\"}\" http://localhost:3000/webhook"
   },
   "keywords": [
     "hibiscus",

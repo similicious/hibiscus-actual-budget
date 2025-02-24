@@ -8,7 +8,18 @@ export function startNotificationScheduler(config: Config) {
     logger.info(`Starting notification scheduler with schedule: ${config.ntfy.schedule}`);
 
     cron.schedule(config.ntfy.schedule, () => {
-      sendNtfyNotification(config).catch((error) => {
+      sendNtfyNotification(config, {
+        title: "Hibiscus Sync Reminder",
+        message: "Time to sync your bank transactions",
+        tags: ["bank"],
+        actions: [
+          {
+            type: "view",
+            label: "Sync Now",
+            url: `${config.server.publicUrl}/sync`,
+          },
+        ],
+      }).catch((error) => {
         logger.error("Failed to send scheduled notification", error);
       });
     });

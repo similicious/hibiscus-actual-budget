@@ -2,22 +2,36 @@ import { Config } from "@app/model/config";
 import { logger } from "@app/utils/logger";
 import fetch from "node-fetch";
 
-export async function sendNtfyNotification(config: Config) {
+interface NtfyNotificationOptions {
+  title: string;
+  message: string;
+  tags?: string[];
+  actions?: { label: string; type: string; url: string }[];
+}
+
+export async function sendNtfyNotification(config: Config, options: NtfyNotificationOptions) {
   try {
     const url = `https://ntfy.sh/${config.ntfy.topic}`;
-    const syncUrl = `${config.server.publicUrl}/sync`;
+
+    const headers: Record<string, string> = {
+      Title: options.title,
+    };
+
+    if (options.tags && options.tags.length > 0) {
+      headers.Tags = options.tags.join(",");
+    }
+
+    if (options.actions && options.actions.length > 0) {
+      headers.Actions = options.actions.map((action) => `${action.type}, ${action.label}, ${action.url}`).join(";");
+    }
 
     await fetch(url, {
       method: "POST",
-      headers: {
-        Title: "Hibiscus Sync Reminder",
-        Tags: "bank",
-        Actions: `view, Sync Now, ${syncUrl}`,
-      },
-      body: "Time to sync your bank transactions",
+      headers,
+      body: options.message,
     });
 
-    logger.info("Sent ntfy notification");
+    logger.info("Sent ntfy notification:", options.title);
   } catch (error) {
     logger.error("Failed to send ntfy notification", error);
     throw new Error("Failed to send ntfy notification");
