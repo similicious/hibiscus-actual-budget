@@ -57,6 +57,8 @@ docker run -v /path/to/config:/app/config \
           -v /path/to/data:/app/data \
           -p 3000:3000 \
           -e PORT=3000 \
+          -e PUID=1000 \
+          -e PGID=1000 \
           ghcr.io/similicious/hibiscus-actual-budget:latest
 ```
 
