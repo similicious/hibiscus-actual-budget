@@ -57,7 +57,7 @@ docker run -v /path/to/config:/app/config \
           -v /path/to/data:/app/data \
           -p 3000:3000 \
           -e PORT=3000 \
-          hibiscus-actual
+          ghcr.io/similicious/hibiscus-actual-budget:latest
 ```
 
 ## Configuration
