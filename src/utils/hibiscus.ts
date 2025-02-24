@@ -25,8 +25,6 @@ export async function triggerHibiscusSync(config: Config): Promise<void> {
       throw new Error(`Failed to trigger sync: ${response.statusText}`);
     }
 
-    console.log(response);
-
     logger.info("Successfully triggered Hibiscus sync");
   } catch (error) {
     logger.error("Failed to trigger Hibiscus sync", error);

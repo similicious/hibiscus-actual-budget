@@ -22,7 +22,7 @@ export function createServer(config: Config) {
   // Endpoint for manual sync trigger from ntfy notification
   app.get("/sync", async (req: express.Request, res: express.Response) => {
     try {
-      logger.info("Manual sync triggered via ntfy");
+      logger.info("Sync triggered via ntfy");
       await triggerHibiscusSync(config);
       res.send(`
         <html>
