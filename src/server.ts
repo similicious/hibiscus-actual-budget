@@ -3,6 +3,7 @@ import { triggerHibiscusSync } from "@app/utils/hibiscus";
 import { importTransactionsForAccount } from "@app/utils/import-transactions";
 import { logger } from "@app/utils/logger";
 import { startNotificationScheduler } from "@app/utils/scheduler";
+import type { Request, Response } from "express";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -24,7 +25,7 @@ export function createServer(config: Config) {
   startNotificationScheduler(config);
 
   // Endpoint for manual sync trigger from ntfy notification
-  app.get("/sync", async (req: express.Request, res: express.Response) => {
+  app.get("/sync", async (_, res: Response) => {
     try {
       logger.info("Sync triggered via ntfy");
       await triggerHibiscusSync(config);
@@ -35,12 +36,13 @@ export function createServer(config: Config) {
     }
   });
 
-  app.post("/webhook", async (req: express.Request, res: express.Response) => {
+  app.post("/webhook", async (req: Request, res: Response) => {
     try {
       const contextStr = req.body.context;
       if (!contextStr) {
         logger.error("No context provided in webhook request");
-        return res.status(400).json({ error: "No context provided" });
+        res.status(400).json({ error: "No context provided" });
+        return;
       }
 
       let contextData;
@@ -48,13 +50,15 @@ export function createServer(config: Config) {
         contextData = JSON.parse(contextStr);
       } catch (error) {
         logger.error("Failed to parse context JSON", error);
-        return res.status(400).json({ error: "Invalid context JSON" });
+        res.status(400).json({ error: "Invalid context JSON" });
+        return;
       }
 
       const result = hibiscusContextSchema.safeParse(contextData);
       if (!result.success) {
         logger.error("Invalid context data", result.error);
-        return res.status(400).json({ error: "Invalid context data" });
+        res.status(400).json({ error: "Invalid context data" });
+        return;
       }
 
       const hibiscusAccountId = result.data.id;
