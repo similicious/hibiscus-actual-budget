@@ -5,9 +5,19 @@ import { logger } from "@app/utils/logger";
 import { startNotificationScheduler } from "@app/utils/scheduler";
 import type { Request, Response } from "express";
 import express from "express";
+import xmlrpc from "express-xmlrpc";
 import path from "path";
+import { tinyws } from "tinyws";
 import { fileURLToPath } from "url";
 import { z } from "zod";
+
+declare global {
+  namespace Express {
+    export interface Request {
+      ws: () => Promise<WebSocket>;
+    }
+  }
+}
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -76,6 +86,43 @@ export function createServer(config: Config) {
       res.status(500).json({ error: "Internal server error" });
     }
   });
+
+  const clients: WebSocket[] = [];
+  let hibiscusResponse: express.Response | undefined = undefined;
+  app.use("/ws", tinyws(), async (req, res) => {
+    if (!req.ws) {
+      return res.status(400).send("WebSocket required");
+    }
+    const ws = await req.ws();
+    clients.push(ws);
+
+    ws.onclose = () => {
+      clients.splice(clients.indexOf(ws), 1);
+    };
+    ws.onmessage = (event) => {
+      const message = event.data;
+      logger.info("Received TAN from WebSocket client: %s", message);
+      if (hibiscusResponse) {
+        hibiscusResponse.send(xmlrpc.serializeResponse(message));
+        hibiscusResponse = undefined;
+      }
+    };
+  });
+
+  app.use("/xmlrpc", xmlrpc.bodyParser);
+  app.post(
+    "/xmlrpc",
+    xmlrpc.apiHandler({
+      "hibiscus.getTan": async (req: express.Request, res: express.Response) => {
+        logger.info("Received Tan request from Hibiscus");
+        let [text, id, type, payload] = req.body.params;
+        hibiscusResponse = res;
+        clients.forEach((client) => {
+          client.send(JSON.stringify({ text, id, type, payload }));
+        });
+      },
+    }),
+  );
 
   return app;
 }
