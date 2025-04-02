@@ -31,9 +31,9 @@ export async function sendNtfyNotification(config: Config, options: NtfyNotifica
       body: options.message,
     });
 
-    logger.info("Sent ntfy notification:", options.title);
+    logger.info("Sent ntfy notification: %s", options.title);
   } catch (error) {
-    logger.error("Failed to send ntfy notification", error);
+    logger.error("Failed to send ntfy notification: %s", error);
     throw new Error("Failed to send ntfy notification");
   }
 }

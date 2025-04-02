@@ -40,7 +40,7 @@ export function createServer(config: Config) {
       await triggerHibiscusSync(config);
       res.sendFile(path.join(__dirname, "views", "sync-success.html"));
     } catch (error) {
-      logger.error("Failed to handle sync request", error);
+      logger.error("Failed to handle sync request: %s", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
@@ -57,13 +57,13 @@ export function createServer(config: Config) {
       try {
         contextData = JSON.parse(contextStr);
       } catch (error) {
-        logger.error("Failed to parse context JSON", error);
+        logger.error("Failed to parse context JSON: %s", error);
         return res.status(400).json({ error: "Invalid context JSON" });
       }
 
       const result = hibiscusContextSchema.safeParse(contextData);
       if (!result.success) {
-        logger.error("Invalid context data", result.error);
+        logger.error("Invalid context data: %s", result.error);
         return res.status(400).json({ error: "Invalid context data" });
       }
 
@@ -72,13 +72,13 @@ export function createServer(config: Config) {
 
       // Process transactions asynchronously to avoid blocking the response
       importTransactionsForAccount(config, hibiscusAccountId).catch((error) => {
-        logger.error("Failed to import transactions", error);
+        logger.error("Failed to import transactions: %s", error);
       });
 
       // Return success immediately since we're processing asynchronously
       res.json({ message: "Processing transactions" });
     } catch (error) {
-      logger.error("Webhook error", error);
+      logger.error("Webhook error: %s", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
