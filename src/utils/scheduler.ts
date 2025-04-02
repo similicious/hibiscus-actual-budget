@@ -20,11 +20,11 @@ export function startNotificationScheduler(config: Config) {
           },
         ],
       }).catch((error) => {
-        logger.error("Failed to send scheduled notification", error);
+        logger.error("Failed to send scheduled notification: %s", error);
       });
     });
   } catch (error) {
-    logger.error("Failed to start notification scheduler", error);
+    logger.error("Failed to start notification scheduler: %s", error);
     throw error;
   }
 }
