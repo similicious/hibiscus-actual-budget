@@ -16,7 +16,7 @@ export function mapToActualTransaction(hibiscusTx: HibiscusTransaction): CreateA
 
 function formatNotes(tx: HibiscusTransaction): string {
   const details = [
-    `Type: ${tx.art}`,
+    ...(tx.art == undefined ? [] : `Type: ${tx.art}`),
     `Note: ${[tx.zweck, tx.zweck2, tx.zweck3].filter(Boolean).join(" ")}`,
     `Id: ${tx.id}`,
   ];
