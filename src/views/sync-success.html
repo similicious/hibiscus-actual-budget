@@ -1,3 +1,4 @@
+<!doctype html>
 <html>
   <head>
     <title>Hibiscus Sync</title>
@@ -22,6 +23,9 @@
         border-radius: 8px;
         margin: 20px 0;
       }
+      .hidden {
+        display: none;
+      }
       button {
         background-color: #2c3e50;
         color: white;
@@ -38,6 +42,42 @@
         width: 25%;
       }
     </style>
+    <script>
+      const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
+      const socket = new WebSocket(`${wsProtocol}://${window.location.host}/ws`);
+      socket.addEventListener("message", (event) => {
+        const data = JSON.parse(event.data);
+        console.debug("Received data:", data);
+
+        if (data.type !== "PHOTOTAN" && data.type !== "QRTAN") {
+          console.error("Unexpected TAN type:", data.type);
+          return;
+        }
+        const text = document.getElementById("tan-request-text");
+        text.innerText = data.text;
+        text.innerHTML.replace(/\\n/g, "<br>");
+
+        const img = document.getElementById("tan-request-img");
+        img.src = data.payload;
+
+        const msg = document.getElementById("tan-request");
+        msg.classList.remove("hidden");
+
+        const tanInput = document.getElementById("tan-input");
+        tanInput.focus();
+      });
+
+      function submitTan() {
+        const tanInput = document.getElementById("tan-input");
+        const tan = tanInput.value;
+        if (!tan) {
+          alert("Please enter a TAN.");
+          return;
+        }
+        socket.send(tan);
+        tanInput.value = "";
+      }
+    </script>
   </head>
   <body>
     <h1>Hibiscus Sync</h1>
@@ -48,6 +88,15 @@
       />
     </svg>
     <div class="message">Sync request sent to Hibiscus. Please check your banking app for authorization.</div>
+    <div class="message hidden" id="tan-request">
+      <p><strong>TAN request received</strong></p>
+      <p id="tan-request-text"></p>
+      <p><img id="tan-request-img" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" /></p>
+      <form onsubmit="submitTan(); return false;">
+        <input type="text" id="tan-input" placeholder="Enter TAN" />
+        <button id="tan-submit">Submit</button>
+      </form>
+    </div>
     <button onclick="window.close()">Close Tab</button>
   </body>
 </html>

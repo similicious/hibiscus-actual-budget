@@ -27,8 +27,15 @@ sequenceDiagram
     ntfy->>User: Display notification with sync button
     User->>Server: Click sync button (GET /sync)
     Server->>Hibiscus: Request sync
-    Hibiscus-->>User: Request authorization (banking app)
-    User->>Hibiscus: Authorize
+    alt PushTAN
+      Hibiscus-->>User: Request authorization (banking app) for PushTAN
+      User->>Hibiscus: Authorize
+    else PhotoTAN
+      Hibiscus-->>Server: Request authorization (TAN entry) for PhotoTAN
+      Server->>User: Display PhotoTAN
+      User->>Server: Enter TAN from banking app
+      Server->>Hibiscus: Authorize
+    end
     Hibiscus->>Server: Send webhook
     Server->>Actual: Import transactions
 ```
@@ -87,8 +94,14 @@ Configure the following in `config/config.json`:
 
 ## Hibiscus Setup
 
-1. In Hibiscus, configure a webhook for account synchronization
+1. In Hibiscus, configure a webhook for account synchronization (under *System-Einstellungen* -> *Benachrichtigungen* -> *URL nach erfolgreicher Synchronisierung aufrufen*)
 2. Point it to `http://your-server:3000/webhook`
+
+If your bank uses PhotoTAN/QRTAN for HIBC authentication, you will also need to configure the bank connection:
+
+1. Set the TAN-Handler to *XML-RPC Handler*
+2. Set the URL to `http://your-server:3000/xmlrpc`
+3. Leave the rest as defaults
 
 When an account syncs, the server will automatically:
 
