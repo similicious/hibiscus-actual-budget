@@ -27,8 +27,8 @@ export const hibiscusTransactionSchema = z.object({
 
   // Account and bank details
   empfaenger_name: z.string().min(1, "Payee name is required"),
-  empfaenger_konto: z.string(),
-  empfaenger_blz: z.string(),
+  empfaenger_konto: z.string().optional(),
+  empfaenger_blz: z.string().optional(),
   konto_id: z.string().regex(/^\d+$/, "Account ID must be numeric"),
 
   // Transaction details
