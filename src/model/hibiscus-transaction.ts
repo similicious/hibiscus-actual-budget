@@ -18,7 +18,7 @@ export const hibiscusTransactionSchema = z.object({
     .transform((date) => new Date(date)),
   valuta: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Value date must be in YYYY-MM-DD format")
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Valuta date must be in YYYY-MM-DD format")
     .transform((date) => new Date(date)),
 
   // Amount fields
