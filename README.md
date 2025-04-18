@@ -32,6 +32,9 @@ sequenceDiagram
       User->>Hibiscus: Authorize
     else PhotoTAN
       Hibiscus-->>Server: Request authorization (TAN entry) for PhotoTAN
+      Server->>ntfy: Request TAN entry
+      ntfy->>User: Display notification with TAN entry button
+      User->>Server: Click TAN entry button (GET /tan-challenge/:id)
       Server->>User: Display PhotoTAN
       User->>Server: Enter TAN from banking app
       Server->>Hibiscus: Authorize
