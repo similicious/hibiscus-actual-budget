@@ -11,14 +11,6 @@ import { fileURLToPath } from "url";
 import { z } from "zod";
 import { sendNtfyNotification } from "./utils/ntfy";
 
-declare global {
-  namespace Express {
-    export interface Request {
-      ws: () => Promise<WebSocket>;
-    }
-  }
-}
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const hibiscusContextSchema = z.object({
