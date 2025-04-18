@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hibiscus TAN Challenge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const text = document.getElementById("challenge-text");
+        text.innerHTML = text.innerHTML.replace(/\n/g, "<br>");
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Hibiscus TAN Challenge</h1>
+    <p id="challenge-text"><%= text %></p>
+    <p><img src="<%= payload %>" /></p>
+    <form method="post">
+      <input type="text" placeholder="Enter TAN" required name="tan" />
+      <button type="submit">Submit</button>
+    </form>
+  </body>
+</html>

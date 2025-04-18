@@ -22,12 +22,12 @@
     "@actual-app/api": "^25.4.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-xmlrpc": "github:philetus/express-xmlrpc",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "pino": "^9.6.0",
-    "tinyws": "^0.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {

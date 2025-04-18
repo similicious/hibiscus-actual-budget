@@ -7,9 +7,9 @@ import type { Request, Response } from "express";
 import express from "express";
 import xmlrpc from "express-xmlrpc";
 import path from "path";
-import { tinyws } from "tinyws";
 import { fileURLToPath } from "url";
 import { z } from "zod";
+import { sendNtfyNotification } from "./utils/ntfy";
 
 declare global {
   namespace Express {
@@ -30,6 +30,8 @@ export function createServer(config: Config) {
 
   // Parse URL-encoded bodies
   app.use(express.urlencoded({ extended: true }));
+  app.set("view engine", "ejs");
+  app.set("views", path.join(__dirname, "views"));
 
   // Start notification scheduler
   startNotificationScheduler(config);
@@ -87,42 +89,66 @@ export function createServer(config: Config) {
     }
   });
 
-  const clients: WebSocket[] = [];
-  let hibiscusResponse: express.Response | undefined = undefined;
-  app.use("/ws", tinyws(), async (req, res) => {
-    if (!req.ws) {
-      return res.status(400).send("WebSocket required");
-    }
-    const ws = await req.ws();
-    clients.push(ws);
-
-    ws.onclose = () => {
-      clients.splice(clients.indexOf(ws), 1);
-    };
-    ws.onmessage = (event) => {
-      const message = event.data;
-      logger.info("Received TAN from WebSocket client: %s", message);
-      if (hibiscusResponse) {
-        hibiscusResponse.send(xmlrpc.serializeResponse(message));
-        hibiscusResponse = undefined;
-      }
-    };
-  });
+  const tanRequests: Map<string, { challenge: { text: string; type: string; payload: string }; res: Response }> =
+    new Map();
 
   app.use("/xmlrpc", xmlrpc.bodyParser);
   app.post(
     "/xmlrpc",
     xmlrpc.apiHandler({
-      "hibiscus.getTan": async (req: express.Request, res: express.Response) => {
+      "hibiscus.getTan": async (req: Request, res: Response) => {
         logger.info("Received Tan request from Hibiscus");
         let [text, id, type, payload] = req.body.params;
-        hibiscusResponse = res;
-        clients.forEach((client) => {
-          client.send(JSON.stringify({ text, id, type, payload }));
-        });
+        try {
+          await sendNtfyNotification(config, {
+            title: "Hibiscus TAN Request",
+            message: "Hibiscus needs your TAN to synchronize transactions",
+            tags: ["bank"],
+            actions: [
+              {
+                type: "view",
+                label: "Enter TAN",
+                url: `${config.server.publicUrl}/tan-challenge/${id}`,
+              },
+            ],
+          });
+          tanRequests.set(id, { challenge: { text, type, payload }, res });
+        } catch (error) {
+          logger.error("Failed to send ntfy notification: %s", error);
+          res.status(500).json({ error: "Failed to send notification" });
+          return;
+        }
       },
     }),
   );
+
+  app.get("/tan-challenge/:id", (req: Request, res: Response) => {
+    const id = req.params.id;
+    const tanRequest = tanRequests.get(id);
+    if (!tanRequest) {
+      logger.error("No TAN request found for ID: %s", id);
+      res.status(404).json({ error: "TAN request not found" });
+      return;
+    }
+    res.status(200).render("tan-challenge", tanRequest.challenge);
+    return;
+  });
+  app.post("/tan-challenge/:id", (req: Request, res: Response) => {
+    const id = req.params.id;
+    const tanRequest = tanRequests.get(id);
+    if (!tanRequest) {
+      logger.error("No TAN request found for ID: %s", id);
+      res.status(404).json({ error: "TAN request not found" });
+      return;
+    }
+    tanRequest.res.send(xmlrpc.serializeResponse(req.body.tan));
+    tanRequests.delete(id);
+    logger.info("TAN request completed for ID: %s", id);
+    res.status(200).render("tan-success.html", tanRequest.challenge);
+    return;
+  });
+
+  app.use("/static", express.static(path.join(__dirname, "static")));
 
   return app;
 }
