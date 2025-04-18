@@ -1,9 +1,15 @@
 import { loadConfig } from "@app/config";
 import { createServer } from "@app/server";
 import { logger } from "@app/utils/logger";
+import { Telegram } from "./utils/telegram";
 
 logger.info("Loading configuration");
 const config = loadConfig();
+
+if (config.telegram) {
+  // Start bot
+  Telegram.get(config);
+}
 
 const app = createServer(config);
 
