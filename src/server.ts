@@ -3,6 +3,7 @@ import { triggerHibiscusSync } from "@app/utils/hibiscus";
 import { importTransactionsForAccount } from "@app/utils/import-transactions";
 import { logger } from "@app/utils/logger";
 import { startNotificationScheduler } from "@app/utils/scheduler";
+import { randomUUID } from "crypto";
 import type { Request, Response } from "express";
 import express from "express";
 import xmlrpc from "express-xmlrpc";
@@ -89,8 +90,9 @@ export function createServer(config: Config) {
     "/xmlrpc",
     xmlrpc.apiHandler({
       "hibiscus.getTan": async (req: Request, res: Response) => {
-        logger.info("Received Tan request from Hibiscus");
-        let [text, id, type, payload] = req.body.params;
+        const id = randomUUID();
+        let [text, accountId, type, payload] = req.body.params;
+        logger.info(`Received Tan request for account ${accountId} from Hibiscus (UUID: ${id})`);
         try {
           await sendNtfyNotification(config, {
             title: "Hibiscus TAN Request",
