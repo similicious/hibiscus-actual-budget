@@ -25,6 +25,7 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-xmlrpc": "github:philetus/express-xmlrpc",
+    "grammy": "^1.36.0",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "pino": "^9.6.0",

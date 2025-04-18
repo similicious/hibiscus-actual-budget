@@ -23,20 +23,28 @@ const budgetConfigSchema = z.object({
 
 const ntfyConfigSchema = z.object({
   topic: z.string().min(1),
-  schedule: z.string().min(1).describe("Cron syntax, e.g. '0 12 */2 * *' for noon every 2 days"),
+});
+
+const telegramConfigSchema = z.object({
+  token: z.string().min(1),
+  chatId: z.string().optional(),
 });
 
 const serverConfigSchema = z.object({
   publicUrl: z.string().url(),
 });
 
-export const configSchema = z.object({
-  server: serverConfigSchema,
-  actual: actualConfigSchema,
-  hibiscus: hibiscusConfigSchema,
-  ntfy: ntfyConfigSchema,
-  dataDir: z.string(),
-  budgets: z.array(budgetConfigSchema).min(1),
-});
+export const configSchema = z
+  .object({
+    server: serverConfigSchema,
+    actual: actualConfigSchema,
+    hibiscus: hibiscusConfigSchema,
+    notificationSchedule: z.string().min(1).describe("Cron syntax, e.g. '0 12 */2 * *' for noon every 2 days"),
+    ntfy: ntfyConfigSchema.optional(),
+    telegram: telegramConfigSchema.optional(),
+    dataDir: z.string(),
+    budgets: z.array(budgetConfigSchema).min(1),
+  })
+  .refine((data) => !!data.ntfy !== !!data.telegram, "Either ntfy or telegram config must be provided");
 
 export type Config = z.infer<typeof configSchema>;

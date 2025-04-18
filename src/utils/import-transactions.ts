@@ -2,8 +2,8 @@ import api from "@actual-app/api";
 import { Config } from "@app/model/config";
 import { fetchHibiscusTransactions } from "@app/utils/hibiscus";
 import { logger } from "@app/utils/logger";
-import { sendNtfyNotification } from "@app/utils/ntfy";
 import { mapToActualTransaction } from "@app/utils/transactions";
+import { sendNotification } from "./notifications";
 
 export async function importTransactionsForAccount(config: Config, hibiscusAccountId: number) {
   try {
@@ -71,19 +71,15 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
     }
 
     // Send notification with sync summary
-    await sendNtfyNotification(config, {
+    await sendNotification(config, {
       title: `Hibiscus Sync Complete: ${account.name}`,
       message: `Added: ${result.added.length}
 Updated: ${result.updated.length}${result.errors?.length ? `\nErrors: ${result.errors.length}` : ""}
 Balance Status: ${actualBalance === hibiscusBalance ? "✅ Balances Match" : "❌ Balances Differ"}`,
-      tags: ["bank"],
-      actions: [
-        {
-          type: "view",
-          label: "View Account",
-          url: `${config.actual.serverUrl}/accounts/${accountMapping.accountId}`,
-        },
-      ],
+      link: {
+        label: "View Account",
+        url: `${config.actual.serverUrl}/accounts/${accountMapping.accountId}`,
+      },
     });
   } finally {
     logger.info("Shutting down");
