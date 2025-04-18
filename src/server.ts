@@ -107,6 +107,15 @@ export function createServer(config: Config) {
             ],
           });
           tanRequests.set(id, { challenge: { text, type, payload }, res });
+          setTimeout(
+            () => {
+              if (tanRequests.has(id)) {
+                logger.error("TAN request timed out for ID: %s", id);
+                tanRequests.delete(id);
+              }
+            },
+            10 * 60 * 1000,
+          );
         } catch (error) {
           logger.error("Failed to send ntfy notification: %s", error);
           res.status(500).json({ error: "Failed to send notification" });
