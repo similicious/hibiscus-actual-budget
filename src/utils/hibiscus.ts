@@ -27,7 +27,7 @@ export async function triggerHibiscusSync(config: Config): Promise<void> {
 
     logger.info("Successfully triggered Hibiscus sync");
   } catch (error) {
-    logger.error("Failed to trigger Hibiscus sync", error);
+    logger.error("Failed to trigger Hibiscus sync: %s", error);
     throw new Error("Failed to trigger Hibiscus sync");
   }
 }
@@ -61,7 +61,7 @@ export async function fetchHibiscusTransactions(
 
     return transactions;
   } catch (error) {
-    logger.error("Failed to fetch Hibiscus transactions", error);
+    logger.error("Failed to fetch Hibiscus transactions: %s", error);
     throw new Error("Failed to fetch Hibiscus transactions");
   }
 }
