@@ -1,37 +1,33 @@
 import { Config } from "@app/model/config";
 import { logger } from "@app/utils/logger";
 import fetch from "node-fetch";
+import { SyncNotification } from "./notifications";
 
-interface NtfyNotificationOptions {
-  title: string;
-  message: string;
-  tags?: string[];
-  actions?: { label: string; type: string; url: string }[];
-}
-
-export async function sendNtfyNotification(config: Config, options: NtfyNotificationOptions) {
+export async function sendNtfyNotification(config: Config, notification: SyncNotification) {
   try {
+    if (!config.ntfy) {
+      logger.error("Ntfy configuration is not set");
+      return;
+    }
     const url = `https://ntfy.sh/${config.ntfy.topic}`;
 
     const headers: Record<string, string> = {
-      Title: options.title,
+      Title: notification.title,
     };
 
-    if (options.tags && options.tags.length > 0) {
-      headers.Tags = options.tags.join(",");
-    }
+    headers.Tags = "bank";
 
-    if (options.actions && options.actions.length > 0) {
-      headers.Actions = options.actions.map((action) => `${action.type}, ${action.label}, ${action.url}`).join(";");
+    if (notification.link) {
+      headers.Actions = `view, ${notification.link.label}, ${notification.link.url}`;
     }
 
     await fetch(url, {
       method: "POST",
       headers,
-      body: options.message,
+      body: notification.message,
     });
 
-    logger.info("Sent ntfy notification: %s", options.title);
+    logger.info("Sent ntfy notification: %s", notification.title);
   } catch (error) {
     logger.error("Failed to send ntfy notification: %s", error);
     throw new Error("Failed to send ntfy notification");
