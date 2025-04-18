@@ -136,7 +136,7 @@ export function createServer(config: Config) {
     tanRequest.res.send(xmlrpc.serializeResponse(req.body.tan));
     tanRequests.delete(id);
     logger.info("TAN request completed for ID: %s", id);
-    res.status(200).render("tan-success.html", tanRequest.challenge);
+    res.status(200).sendFile(path.join(__dirname, "views", "tan-success.html"));
     return;
   });
 
