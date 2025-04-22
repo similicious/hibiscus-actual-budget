@@ -18,7 +18,7 @@ export function loadConfig(): Config {
 
     return config;
   } catch (error) {
-    logger.error("Failed to load configuration", error as Error);
+    logger.error("Failed to load configuration: %s", error as Error);
     throw error;
   }
 }
