@@ -16,10 +16,10 @@ export function mapToActualTransaction(hibiscusTx: HibiscusTransaction): CreateA
 
 function formatNotes(tx: HibiscusTransaction): string {
   const details = [
-    ...(tx.art == undefined ? [] : `Type: ${tx.art}`),
+    tx.art ? `Type: ${tx.art}` : undefined,
     `Note: ${[tx.zweck, tx.zweck2, tx.zweck3].filter(Boolean).join(" ")}`,
     `Id: ${tx.id}`,
   ];
 
-  return details.join(" | ");
+  return details.filter(Boolean).join(" | ");
 }
