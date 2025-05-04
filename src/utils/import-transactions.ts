@@ -93,7 +93,8 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
     await sendNtfyNotification(config, {
       title: `Hibiscus Sync Complete: ${account.name}`,
       message: `Added: ${result.added.length}
-Updated: ${result.updated.length}${result.errors?.length ? `\nErrors: ${result.errors.length}` : ""}
+Updated: ${result.updated.length}
+Filtered: ${filteredTransactionCount}${result.errors?.length ? `\nErrors: ${result.errors.length}` : ""}
 Balance Status: ${actualBalance === hibiscusBalance ? "✅ Balances Match" : "❌ Balances Differ"}`,
       tags: ["bank"],
       actions: [
