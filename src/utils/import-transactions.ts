@@ -61,7 +61,7 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
       const txCountAfterFiltering = hibiscusTransactions.length;
       filteredTransactionCount = txCountBeforeFiltering - txCountAfterFiltering;
 
-      logger.info("Filtered done, dropped %s transactions", filteredTransactionCount);
+      logger.info("Filtering transactions done, dropped %s transactions", filteredTransactionCount);
     }
 
     logger.info("Converting transactions");
@@ -81,7 +81,7 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
     }
 
     logger.info(
-      `Import Summary for ${account.name}: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions\n- Filtered: ${filteredTransactionCount}`,
+      `Import Summary for ${account.name}: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions\n- Filtered: ${filteredTransactionCount} transactions`,
     );
 
     if (result.errors && result.errors.length > 0) {

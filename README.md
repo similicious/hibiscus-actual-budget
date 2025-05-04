@@ -6,7 +6,7 @@ A Node.js application that syncs your bank transactions to Actual Budget using H
 
 - 🔄 Webhook-based transaction syncing from Hibiscus to Actual Budget
 - 🎯 Transaction mapping with detailed notes
-- 💡 Duplicate detection
+- 🔍 Transaction filtering
 - 📦 Support for multiple budgets and accounts
 - 📱 Notifications via ntfy.sh for sync reminders
 
@@ -94,17 +94,17 @@ Configure the following in `config/config.json`:
   - `accounts`: Array of account mappings
     - `accountId`: The Actual Budget account ID
     - `hibiscusAccountId`: The Hibiscus account ID
-    - `transactionFilters[]`: Transaction filters, optional
-      - `property`: A property of the [hibiscus transaction schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13)
-      - `value`: A subtring that of the given property
+    - `transactionFilters[]`: Transaction filter rules, optional
+      - `property`: A property of a hibiscus transaction ([schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13))
+      - `value`: A string that must be included in the transaction property for the filter to match
 
 ### Transaction filtering
 
-To prevent certain transctions to be imported into Actual, rudimentary filtering is available. Configure transaction filters on the account level.
+To prevent certain transctions from being imported, rudimentary filtering is available. Filters are configured on the transaction level.
 
-A transaction filter is an array of objects with `property` and `value` keys, where `property` is a key in the [hibiscus transaction schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13). Every component of the filter must match for the transaction to be dropped.
+A (one) transaction filter rule is an array of objects with `property` and `value` keys, where `property` is a key of a hibiscus transaction ([schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13)). The `value` is matched against the given transaction property via `toString().toLowerCase().includes()`. Every item of a filter rule must match for the transaction to be dropped.
 
-The following example defines two filters:
+Essentially the `transactionFilters` config property is an array of filter rule item arrays. The following example defines two filters:
 
 ```json
 {
