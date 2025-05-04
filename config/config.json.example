@@ -35,7 +35,15 @@
       "accounts": [
         {
           "accountId": "account-id-3",
-          "hibiscusAccountId": 3
+          "hibiscusAccountId": 3,
+          "transactionFilters": [
+            [
+              {
+                "property": "empfaenger_konto",
+                "value": "DE12390812093091"
+              },
+            ],
+          ]
         }
       ]
     }

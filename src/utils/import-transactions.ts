@@ -1,5 +1,6 @@
 import api from "@actual-app/api";
-import { Config } from "@app/model/config";
+import { Config, TransactionFilter } from "@app/model/config";
+import { HibiscusTransaction } from "@app/model/hibiscus-transaction";
 import { fetchHibiscusTransactions } from "@app/utils/hibiscus";
 import { logger } from "@app/utils/logger";
 import { sendNtfyNotification } from "@app/utils/ntfy";
@@ -37,12 +38,30 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
     }
 
     logger.info(`Fetching transactions for account: ${account.name}`);
-    const hibiscusTransactions = await fetchHibiscusTransactions(config, hibiscusAccountId);
+    let hibiscusTransactions = await fetchHibiscusTransactions(config, hibiscusAccountId);
     logger.info(`Found ${hibiscusTransactions.length} transactions`);
 
     if (hibiscusTransactions.length === 0) {
       logger.info("No transactions to import");
       return;
+    }
+
+    let filteredTransactionCount = 0;
+
+    if (accountMapping.transactionFilters) {
+      logger.info("Filtering transactions, found %s filter rules", accountMapping.transactionFilters.length);
+      const txCountBeforeFiltering = hibiscusTransactions.length;
+
+      hibiscusTransactions = hibiscusTransactions.filter(
+        (tx) =>
+          !accountMapping.transactionFilters!.some((transactionFilter) =>
+            isTransactionFilterMatching(tx, transactionFilter),
+          ),
+      );
+      const txCountAfterFiltering = hibiscusTransactions.length;
+      filteredTransactionCount = txCountBeforeFiltering - txCountAfterFiltering;
+
+      logger.info("Filtered done, dropped %s transactions", filteredTransactionCount);
     }
 
     logger.info("Converting transactions");
@@ -62,7 +81,7 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
     }
 
     logger.info(
-      `Import Summary for ${account.name}: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions`,
+      `Import Summary for ${account.name}: \n- Added: ${result.added.length} transactions\n- Updated: ${result.updated.length} transactions\n- Filtered: ${filteredTransactionCount}`,
     );
 
     if (result.errors && result.errors.length > 0) {
@@ -89,4 +108,8 @@ Balance Status: ${actualBalance === hibiscusBalance ? "âœ… Balances Match" : "â
     logger.info("Shutting down");
     await api.shutdown();
   }
+}
+
+function isTransactionFilterMatching(tx: HibiscusTransaction, filter: TransactionFilter) {
+  return filter.every(({ property, value }) => tx[property]?.toString().toLowerCase().includes(value.toLowerCase()));
 }

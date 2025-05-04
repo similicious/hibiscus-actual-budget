@@ -1,3 +1,4 @@
+import { hibiscusTransactionSchema } from "@app/model/hibiscus-transaction";
 import { z } from "zod";
 
 const actualConfigSchema = z.object({
@@ -11,9 +12,17 @@ const hibiscusConfigSchema = z.object({
   password: z.string().min(1),
 });
 
+const transactionFilterSchema = z.array(
+  z.object({
+    property: hibiscusTransactionSchema.keyof(),
+    value: z.string(),
+  }),
+);
+
 const accountMappingSchema = z.object({
   accountId: z.string().min(1),
   hibiscusAccountId: z.number().min(1),
+  transactionFilters: z.array(transactionFilterSchema).optional(),
 });
 
 const budgetConfigSchema = z.object({
@@ -40,3 +49,4 @@ export const configSchema = z.object({
 });
 
 export type Config = z.infer<typeof configSchema>;
+export type TransactionFilter = z.infer<typeof transactionFilterSchema>;

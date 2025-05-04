@@ -94,15 +94,52 @@ Configure the following in `config/config.json`:
   - `accounts`: Array of account mappings
     - `accountId`: The Actual Budget account ID
     - `hibiscusAccountId`: The Hibiscus account ID
+    - `transactionFilters[]`: Transaction filters, optional
+      - `property`: A property of the [hibiscus transaction schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13)
+      - `value`: A subtring that of the given property
+
+### Transaction filtering
+
+To prevent certain transctions to be imported into Actual, rudimentary filtering is available. Configure transaction filters on the account level.
+
+A transaction filter is an array of objects with `property` and `value` keys, where `property` is a key in the [hibiscus transaction schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13). Every component of the filter must match for the transaction to be dropped.
+
+The following example defines two filters:
+
+```json
+{
+  "transactionFilters": [
+    // empfaenger_konto and zweck must match
+    [
+      {
+        "property": "empfaenger_konto",
+        "value": "DE234902839048203948"
+      },
+      {
+        "property": "zweck",
+        "value": "Ignore me"
+      }
+    ],
+
+    // only zweck must match
+    [
+      {
+        "property": "zweck",
+        "value": "Ignore me"
+      }
+    ]
+  ]
+}
+```
 
 ## Hibiscus Setup
 
-1. In Hibiscus, configure a webhook for account synchronization (under *System-Einstellungen* -> *Benachrichtigungen* -> *URL nach erfolgreicher Synchronisierung aufrufen*)
+1. In Hibiscus, configure a webhook for account synchronization (under _System-Einstellungen_ -> _Benachrichtigungen_ -> _URL nach erfolgreicher Synchronisierung aufrufen_)
 2. Point it to `http://your-server:3000/webhook`
 
 If your bank uses PhotoTAN/QRTAN for HIBC authentication, you will also need to configure the bank connection:
 
-1. Set the TAN-Handler to *XML-RPC Handler*
+1. Set the TAN-Handler to _XML-RPC Handler_
 2. Set the URL to `http://your-server:3000/xmlrpc`
 3. Leave the rest as defaults
 
