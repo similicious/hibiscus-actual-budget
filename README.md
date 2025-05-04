@@ -100,7 +100,7 @@ Configure the following in `config/config.json`:
 
 ### Transaction filtering
 
-To prevent certain transctions from being imported, rudimentary filtering is available. Filters are configured on the transaction level.
+To prevent certain transactions from being imported, rudimentary filtering is available. Filters are configured on the transaction level.
 
 A (one) transaction filter rule is an array of objects with `property` and `value` keys, where `property` is a key of a hibiscus transaction ([schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13)). The `value` is matched against the given transaction property via `toString().toLowerCase().includes()`. Every item of a filter rule must match for the transaction to be dropped.
 
