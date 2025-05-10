@@ -21,7 +21,7 @@
   "dependencies": {
     "@actual-app/api": "^25.4.0",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-xmlrpc": "github:philetus/express-xmlrpc",
