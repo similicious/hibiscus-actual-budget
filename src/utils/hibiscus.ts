@@ -3,7 +3,7 @@ import { HibiscusTransaction, hibiscusTransactionSchema } from "@app/model/hibis
 import { logger } from "@app/utils/logger";
 
 import fetch from "node-fetch";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 // Trigger sync for all accounts in Hibiscus
 export async function triggerHibiscusSync(config: Config): Promise<void> {

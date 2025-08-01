@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const parseAmount = (val: string) => {
   const amount = parseFloat(val);

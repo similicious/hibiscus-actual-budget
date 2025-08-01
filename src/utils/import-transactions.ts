@@ -71,7 +71,7 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
     }
 
     logger.info("Converting transactions");
-    const actualTransactions = hibiscusTransactions.map(mapToActualTransaction);
+    const actualTransactions = hibiscusTransactions.map((t) => mapToActualTransaction(t, account.id));
 
     logger.info("Importing transactions");
     const result = await api.importTransactions(account.id, actualTransactions);
@@ -92,7 +92,7 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
 
     if (result.errors && result.errors.length > 0) {
       logger.error(`- Errors: ${result.errors.length}`);
-      result.errors.forEach((error) => logger.error(`${error}`));
+      result.errors.forEach((error: any) => logger.error(`${error}`));
     }
 
     // Send notification with sync summary

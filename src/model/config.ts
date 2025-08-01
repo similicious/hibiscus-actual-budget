@@ -1,13 +1,13 @@
 import { hibiscusTransactionSchema } from "@app/model/hibiscus-transaction";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 const actualConfigSchema = z.object({
-  serverUrl: z.string().url(),
+  serverUrl: z.url(),
   password: z.string().min(1),
 });
 
 const hibiscusConfigSchema = z.object({
-  url: z.string().url(),
+  url: z.url(),
   username: z.string().min(1),
   password: z.string().min(1),
 });
@@ -37,7 +37,7 @@ const ntfyConfigSchema = z.object({
 });
 
 const serverConfigSchema = z.object({
-  publicUrl: z.string().url(),
+  publicUrl: z.url(),
 });
 
 export const configSchema = z.object({

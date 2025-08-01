@@ -1,7 +1,8 @@
-import { TransactionEntity } from "@actual-app/api/@types/loot-core/types/models";
+import { ImportTransactionEntity } from "@actual-app/api/@types/loot-core/src/types/models";
 
 export type CreateActualTransaction = Pick<
-  TransactionEntity,
+  ImportTransactionEntity,
+  | "account"
   | "date"
   | "amount"
   | "imported_payee"

@@ -9,7 +9,7 @@ import express from "express";
 import xmlrpc from "express-xmlrpc";
 import path from "path";
 import { fileURLToPath } from "url";
-import { z } from "zod";
+import { z } from "zod/v4";
 import { sendNtfyNotification } from "./utils/ntfy";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
