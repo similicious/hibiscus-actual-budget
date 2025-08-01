@@ -94,6 +94,7 @@ Configure the following in `config/config.json`:
   - `accounts`: Array of account mappings
     - `accountId`: The Actual Budget account ID
     - `hibiscusAccountId`: The Hibiscus account ID
+    - `fetchDaysAmount`: Optional, defaults to 12, the amount of days of transactions to fetch from hibiscus
     - `transactionFilters[]`: Transaction filter rules, optional
       - `property`: A property of a hibiscus transaction ([schema](https://github.com/similicious/hibiscus-actual-budget/blob/main/src/model/hibiscus-transaction.ts#L13))
       - `value`: A string that must be included in the transaction property for the filter to match

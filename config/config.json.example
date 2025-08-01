@@ -36,6 +36,7 @@
         {
           "accountId": "account-id-3",
           "hibiscusAccountId": 3,
+          "fetchDaysAmount": 17
           "transactionFilters": [
             [
               {
