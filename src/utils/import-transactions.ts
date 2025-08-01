@@ -37,8 +37,14 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
       throw new Error(`Account ${accountMapping.accountId} not found in Actual Budget`);
     }
 
-    logger.info(`Fetching transactions for account: ${account.name}`);
-    let hibiscusTransactions = await fetchHibiscusTransactions(config, hibiscusAccountId);
+    logger.info(
+      `Fetching transactions of the last ${accountMapping.fetchDaysAmount} days for account: ${account.name}`,
+    );
+    let hibiscusTransactions = await fetchHibiscusTransactions(
+      config,
+      hibiscusAccountId,
+      accountMapping.fetchDaysAmount,
+    );
     logger.info(`Found ${hibiscusTransactions.length} transactions`);
 
     if (hibiscusTransactions.length === 0) {

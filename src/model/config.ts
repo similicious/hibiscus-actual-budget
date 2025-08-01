@@ -23,6 +23,7 @@ const accountMappingSchema = z.object({
   accountId: z.string().min(1),
   hibiscusAccountId: z.number().min(1),
   transactionFilters: z.array(transactionFilterSchema).optional(),
+  fetchDaysAmount: z.number().default(12),
 });
 
 const budgetConfigSchema = z.object({

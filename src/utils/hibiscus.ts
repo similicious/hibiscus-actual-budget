@@ -37,17 +37,18 @@ function createBasicAuth(username: string, password: string): string {
   return "Basic " + Buffer.from(username + ":" + password).toString("base64");
 }
 // Construct the Hibiscus endpoint URL for an account
-function constructHibiscusEndpoint(hibiscusAccountId: number): string {
-  return `/webadmin/rest/hibiscus/konto/${hibiscusAccountId}/umsaetze/days/12`;
+function constructHibiscusEndpoint(hibiscusAccountId: number, fetchDaysAmount: number): string {
+  return `/webadmin/rest/hibiscus/konto/${hibiscusAccountId}/umsaetze/days/${fetchDaysAmount}`;
 }
 
 // Fetch and validate transactions from Hibiscus API
 export async function fetchHibiscusTransactions(
   config: Config,
   hibiscusAccountId: number,
+  fetchDaysAmount: number,
 ): Promise<HibiscusTransaction[]> {
   try {
-    const endpoint = constructHibiscusEndpoint(hibiscusAccountId);
+    const endpoint = constructHibiscusEndpoint(hibiscusAccountId, fetchDaysAmount);
     const url = new URL(endpoint, config.hibiscus.url).toString();
     const response = await fetch(url, {
       headers: {
