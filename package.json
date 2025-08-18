@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@actual-app/api": "^25.7.1",
+    "@actual-app/api": "^25.8.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.1",
     "ejs": "^3.1.10",
