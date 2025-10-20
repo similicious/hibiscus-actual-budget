@@ -27,7 +27,7 @@
     "express-xmlrpc": "github:philetus/express-xmlrpc",
     "node-cron": "^4.2.1",
     "node-fetch": "^3.3.2",
-    "pino": "^10.0.0",
+    "pino": "^10.1.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
