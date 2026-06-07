@@ -1,6 +1,6 @@
 import { Config } from "@app/model/config";
 import { sendNtfyNotification } from "./ntfy";
-import { Telegram } from "./telegram";
+import { sendTelegramNotification } from "./telegram";
 
 export interface SyncNotification {
   title: string;
@@ -14,8 +14,7 @@ function getNotifier(config: Config): Notifier {
   if (config.ntfy) {
     return sendNtfyNotification;
   } else if (config.telegram) {
-    const telegram = Telegram.get(config);
-    return telegram.sendNotification.bind(telegram);
+    return sendTelegramNotification;
   } else {
     throw new Error("No notification method configured");
   }

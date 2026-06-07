@@ -138,7 +138,7 @@ Essentially the `transactionFilters` config property is an array of filter rule 
 
 ## Telegram Setup
 
-If you want to use Telegram instead of ntfy.sh, you first need to create a bot (by sending `/newbot` to [@BotFather](https://t.me/BotFather)). Specify the `token` in the config, and omit the `chatId` for now. After starting the server, the Telegram bot should be running. If you go to your Bot in Telegram and click the *START* button, or send it any message, it will respond with the Chat ID. Stop the Server, specify the `chatId` in the config, and restart it.
+If you want to use Telegram instead of ntfy.sh, you first need to create a bot (by sending `/newbot` to [@BotFather](https://t.me/BotFather)). Send your bot a message, then open `https://api.telegram.org/bot<token>/getUpdates` in your browser to find the `chat.id`. Specify both the `token` and `chatId` in the config.
 
 ## Hibiscus Setup
 

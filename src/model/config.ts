@@ -37,7 +37,7 @@ const ntfyConfigSchema = z.object({
 
 const telegramConfigSchema = z.object({
   token: z.string().min(1),
-  chatId: z.string().optional(),
+  chatId: z.string().min(1),
 });
 
 const serverConfigSchema = z.object({

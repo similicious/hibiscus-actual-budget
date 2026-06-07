@@ -1,49 +1,40 @@
 import { Config } from "@app/model/config";
 import { logger } from "@app/utils/logger";
-import { Bot } from "grammy";
+import fetch from "node-fetch";
 import { SyncNotification } from "./notifications";
 
-export class Telegram {
-  private static _instance: Telegram;
-  private bot: Bot;
+export async function sendTelegramNotification(config: Config, notification: SyncNotification) {
+  if (!config.telegram) {
+    throw new Error("Telegram configuration is not set");
+  }
 
-  private constructor(config: Config) {
-    if (!config.telegram) {
-      throw new Error("Telegram configuration is not set");
-    }
-    this.bot = new Bot(config.telegram.token);
-    this.bot.on("message", (ctx) => {
-      ctx.reply(`Chat ID: ${ctx.chat.id}`);
+  const url = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;
+  const message = [
+    notification.title,
+    notification.message,
+    notification.link ? `${notification.link.label}: ${notification.link.url}` : undefined,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: config.telegram.chatId,
+        text: message,
+      }),
     });
-    this.bot.start();
-  }
 
-  public static get(config: Config): Telegram {
-    if (!this._instance) {
-      this._instance = new Telegram(config);
-    }
-    return this._instance;
-  }
-
-  public async sendNotification(config: Config, notification: SyncNotification) {
-    if (!config.telegram) {
-      throw new Error("Telegram configuration is not set");
-    }
-    if (!config.telegram.chatId) {
-      throw new Error("Telegram chat ID is not set");
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(`Telegram API returned ${response.status}: ${body}`);
     }
 
-    let message = `*${notification.title}*\n\n${notification.message}`;
-    if (notification.link) {
-      message += `\n\n[${notification.link.label}](${notification.link.url})`;
-    }
-
-    try {
-      await this.bot.api.sendMessage(config.telegram.chatId, message, { parse_mode: "MarkdownV2" });
-      logger.info("Telegram notification sent successfully");
-    } catch (error) {
-      logger.error("Failed to send Telegram notification: %s", error);
-      throw new Error("Failed to send Telegram notification");
-    }
+    logger.info("Telegram notification sent successfully");
+  } catch (error) {
+    logger.error("Failed to send Telegram notification: %s", error);
+    throw new Error("Failed to send Telegram notification");
   }
 }
