@@ -79,6 +79,7 @@ Configure the following in `config/config.json`:
 - `server`: Server settings
   - `publicUrl`: Public URL of your server (required for ntfy button)
 - `notificationSchedule`: Cron schedule for reminders (e.g. "0 12 _/2 _ \*" for noon every 2 days)
+  - Deprecated fallback: `ntfy.schedule` is still read for now, but logs a warning and should be moved here.
 - `ntfy`: ntfy.sh settings
   - `topic`: Your ntfy.sh topic for notifications
 - `telegram`: Telegram settings
