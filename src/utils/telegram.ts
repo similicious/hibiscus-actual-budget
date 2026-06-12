@@ -9,7 +9,8 @@ function escapeHtml(text: string) {
 
 export async function sendTelegramNotification(config: Config, notification: SyncNotification) {
   if (!config.telegram) {
-    throw new Error("Telegram configuration is not set");
+    logger.error("Telegram configuration is not set");
+    return;
   }
 
   const url = `https://api.telegram.org/bot${config.telegram.token}/sendMessage`;
