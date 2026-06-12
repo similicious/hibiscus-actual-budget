@@ -1,7 +1,7 @@
 import { Config } from "@app/model/config";
 import { logger } from "@app/utils/logger";
+import { SyncNotification } from "@app/utils/notifications";
 import fetch from "node-fetch";
-import { SyncNotification } from "./notifications";
 
 function escapeHtml(text: string) {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

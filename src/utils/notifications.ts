@@ -1,6 +1,6 @@
 import { Config } from "@app/model/config";
-import { sendNtfyNotification } from "./ntfy";
-import { sendTelegramNotification } from "./telegram";
+import { sendNtfyNotification } from "@app/utils/ntfy";
+import { sendTelegramNotification } from "@app/utils/telegram";
 
 export interface SyncNotification {
   title: string;

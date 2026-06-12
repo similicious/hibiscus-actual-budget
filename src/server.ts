@@ -2,6 +2,7 @@ import { Config } from "@app/model/config";
 import { triggerHibiscusSync } from "@app/utils/hibiscus";
 import { importTransactionsForAccount } from "@app/utils/import-transactions";
 import { logger } from "@app/utils/logger";
+import { sendNotification } from "@app/utils/notifications";
 import { startNotificationScheduler } from "@app/utils/scheduler";
 import { randomUUID } from "crypto";
 import type { Request, Response } from "express";
@@ -10,7 +11,6 @@ import xmlrpc from "express-xmlrpc";
 import path from "path";
 import { fileURLToPath } from "url";
 import { z } from "zod/v4";
-import { sendNotification } from "./utils/notifications";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

@@ -1,7 +1,7 @@
 import { Config } from "@app/model/config";
 import { logger } from "@app/utils/logger";
+import { sendNotification } from "@app/utils/notifications";
 import cron from "node-cron";
-import { sendNotification } from "./notifications";
 
 export function startNotificationScheduler(config: Config) {
   try {

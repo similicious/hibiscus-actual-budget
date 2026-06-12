@@ -3,8 +3,8 @@ import { Config, TransactionFilter } from "@app/model/config";
 import { HibiscusTransaction } from "@app/model/hibiscus-transaction";
 import { fetchHibiscusTransactions } from "@app/utils/hibiscus";
 import { logger } from "@app/utils/logger";
+import { sendNotification } from "@app/utils/notifications";
 import { mapToActualTransaction } from "@app/utils/transactions";
-import { sendNotification } from "./notifications";
 
 export async function importTransactionsForAccount(config: Config, hibiscusAccountId: number) {
   try {

@@ -1,7 +1,7 @@
 import { Config } from "@app/model/config";
 import { logger } from "@app/utils/logger";
+import { SyncNotification } from "@app/utils/notifications";
 import fetch from "node-fetch";
-import { SyncNotification } from "./notifications";
 
 export async function sendNtfyNotification(config: Config, notification: SyncNotification) {
   try {
