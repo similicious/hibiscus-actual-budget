@@ -2,6 +2,7 @@ import { Config } from "@app/model/config";
 import { triggerHibiscusSync } from "@app/utils/hibiscus";
 import { importTransactionsForAccount } from "@app/utils/import-transactions";
 import { logger } from "@app/utils/logger";
+import { sendNotification } from "@app/utils/notifications";
 import { startNotificationScheduler } from "@app/utils/scheduler";
 import { randomUUID } from "crypto";
 import type { Request, Response } from "express";
@@ -10,7 +11,6 @@ import xmlrpc from "express-xmlrpc";
 import path from "path";
 import { fileURLToPath } from "url";
 import { z } from "zod/v4";
-import { sendNtfyNotification } from "./utils/ntfy";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,10 +29,10 @@ export function createServer(config: Config) {
   // Start notification scheduler
   startNotificationScheduler(config);
 
-  // Endpoint for manual sync trigger from ntfy notification
+  // Endpoint for manual sync trigger from notification
   app.get("/sync", async (_, res: Response) => {
     try {
-      logger.info("Sync triggered via ntfy");
+      logger.info("Sync triggered via notification");
       await triggerHibiscusSync(config);
       res.sendFile(path.join(__dirname, "views", "sync-success.html"));
     } catch (error) {
@@ -94,17 +94,13 @@ export function createServer(config: Config) {
         let [text, accountId, type, payload] = req.body.params;
         logger.info(`Received Tan request for account ${accountId} from Hibiscus (UUID: ${id})`);
         try {
-          await sendNtfyNotification(config, {
+          await sendNotification(config, {
             title: "Hibiscus TAN Request",
             message: "Hibiscus needs your TAN to synchronize transactions",
-            tags: ["bank"],
-            actions: [
-              {
-                type: "view",
-                label: "Enter TAN",
-                url: `${config.server.publicUrl}/tan-challenge/${id}`,
-              },
-            ],
+            link: {
+              label: "Enter TAN",
+              url: `${config.server.publicUrl}/tan-challenge/${id}`,
+            },
           });
           tanRequests.set(id, { challenge: { text, type, payload }, res });
           setTimeout(
@@ -117,7 +113,7 @@ export function createServer(config: Config) {
             10 * 60 * 1000,
           );
         } catch (error) {
-          logger.error("Failed to send ntfy notification: %s", error);
+          logger.error("Failed to send notification: %s", error);
           res.status(500).json({ error: "Failed to send notification" });
           return;
         }

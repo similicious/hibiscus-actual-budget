@@ -2,9 +2,9 @@
   "server": {
     "publicUrl": "https://hibiscus-actual.example.com"
   },
+  "notificationSchedule": "0 12 */2 * *",
   "ntfy": {
-    "topic": "your-topic",
-    "schedule": "0 12 */2 * *"
+    "topic": "your-topic"
   },
   "actual": {
     "serverUrl": "http://localhost:5006",
@@ -36,14 +36,14 @@
         {
           "accountId": "account-id-3",
           "hibiscusAccountId": 3,
-          "fetchDaysAmount": 17
+          "fetchDaysAmount": 17,
           "transactionFilters": [
             [
               {
                 "property": "empfaenger_konto",
                 "value": "DE12390812093091"
-              },
-            ],
+              }
+            ]
           ]
         }
       ]
