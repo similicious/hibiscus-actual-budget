@@ -3,7 +3,9 @@ FROM node:22-alpine
 # Install required packages for user management
 RUN apk add --no-cache \
     shadow \
-    su-exec
+    su-exec \
+    python3 \
+    make
 
 WORKDIR /app
 
