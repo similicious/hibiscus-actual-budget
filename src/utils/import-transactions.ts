@@ -95,6 +95,8 @@ export async function importTransactionsForAccount(config: Config, hibiscusAccou
       result.errors.forEach((error: any) => logger.error(`${error}`));
     }
 
+    const actualPublicUrl = config.actual.publicUrl ?? config.actual.serverUrl;
+
     // Send notification with sync summary
     await sendNotification(config, {
       title: `Hibiscus Sync Complete: ${account.name}`,
@@ -104,7 +106,7 @@ Filtered: ${filteredTransactionCount}${result.errors?.length ? `\nErrors: ${resu
 Balance Status: ${actualBalance === hibiscusBalance ? "✅ Balances Match" : "❌ Balances Differ"}`,
       link: {
         label: "View Account",
-        url: `${config.actual.serverUrl}/accounts/${accountMapping.accountId}`,
+        url: `${actualPublicUrl}/accounts/${accountMapping.accountId}`,
       },
     });
   } finally {

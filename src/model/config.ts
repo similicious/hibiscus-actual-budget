@@ -3,6 +3,7 @@ import { z } from "zod/v4";
 
 const actualConfigSchema = z.object({
   serverUrl: z.url(),
+  publicUrl: z.url().optional(),
   password: z.string().min(1),
 });
 

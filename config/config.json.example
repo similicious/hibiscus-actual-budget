@@ -8,6 +8,7 @@
   },
   "actual": {
     "serverUrl": "http://localhost:5006",
+    "publicUrl": "https://actual.example.com",
     "password": "your-password"
   },
   "hibiscus": {

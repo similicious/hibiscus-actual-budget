@@ -86,7 +86,8 @@ Configure the following in `config/config.json`:
   - `token`: Your bot's token
   - `chatId`: The chat to use for notifications
 - `actual`: Global Actual Budget settings
-  - `serverUrl`: Your Actual Budget server URL
+  - `serverUrl`: Your Actual Budget server URL for API connections
+  - `publicUrl`: Optional browser-facing Actual Budget URL for notification links; defaults to `serverUrl`
   - `password`: Your Actual Budget password
 - `hibiscus`: Global Hibiscus settings
   - `url`: Base URL of your Hibiscus server
